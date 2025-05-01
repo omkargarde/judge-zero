@@ -8,23 +8,27 @@ import tseslint from "typescript-eslint";
 export default defineConfig([
   globalIgnores(["!node_modules/", "node_modules/*", "!dist", "dist/*"]),
   {
+    rules: {
+      "no-process-env": "error",
+    },
+  },
+  {
     files: ["src/**/*.ts", "**/*.{ts}"],
     languageOptions: {
       globals: globals.node,
       parserOptions: {
         projectService: true,
-        tsconfigRootDir: import.meta.dirname,
+        tsconfigRootDir: ".",
       },
     },
   },
-
   eslint.configs.recommended,
   tseslint.configs.strictTypeChecked,
   {
     languageOptions: {
       parserOptions: {
         projectService: true,
-        tsconfigRootDir: import.meta.dirname,
+        tsconfigRootDir: ".",
       },
     },
   },

@@ -1,5 +1,7 @@
 import winston from "winston";
 
+import { Env } from "./env.ts";
+
 const logger = winston.createLogger({
   defaultMeta: { service: "user-service" },
   format: winston.format.json(),
@@ -17,7 +19,7 @@ const logger = winston.createLogger({
     new winston.transports.File({ filename: "combined.log" }),
   ],
 });
-if (process.env.NODE_ENV !== "production") {
+if (Env.NODE_ENV !== "production") {
   logger.add(
     new winston.transports.Console({
       format: winston.format.simple(),

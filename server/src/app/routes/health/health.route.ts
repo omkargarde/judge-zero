@@ -1,6 +1,6 @@
 import express from "express";
 
-import { HealthCheck } from "./controller.ts";
+import { HealthCheck } from "./health.controller.ts";
 
 const RegisterHealthRoutes = () => {
   const router = express.Router();

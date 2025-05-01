@@ -8,17 +8,21 @@
     "build": "tsc -p .",
     "start": "node dist/index.js",
     "dev": "node --watch 'src/**/*.ts' --env-file=.env --exec 'ts-node' src/index.ts",
-    "lint": "eslint --cache .",
-    "lint:strict": "eslint  .",
-    "lint:fix": "eslint --cache --fix ."
+    "lint": "eslint .",
+    "lint:fix": "eslint --fix .",
+    "p:format": "prisma format",
+    "p:validate": "prisma validate"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "packageManager": "pnpm@10.8.1",
   "dependencies": {
+    "@prisma/client": "^6.7.0",
+    "bcryptjs": "3.0.2",
     "dotenv": "^16.5.0",
     "express": "^5.1.0",
+    "prisma": "^6.7.0",
     "winston": "^3.17.0",
     "zod": "^3.24.3"
   },
