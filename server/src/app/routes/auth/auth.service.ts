@@ -30,7 +30,7 @@ const AddEmailVerificationToken = async (email: string) => {
       emailVerificationToken: token,
     },
     where: {
-      email: "viola@prisma.io",
+      email: email,
     },
   });
 };
