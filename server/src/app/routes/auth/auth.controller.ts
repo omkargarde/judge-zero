@@ -99,7 +99,7 @@ const verifyUser = async (req: Request, res: Response) => {
 
 const loginUser = async (req: Request, res: Response) => {
   const { email, password } = req.body as IUserRequestBody;
-  const user = await UserModel.findOne({ email });
+  const user = await FindUser(email);
   if (!user) {
     throw new BadRequestException(AUTH_MESSAGES.CredFailed);
   }
@@ -109,7 +109,7 @@ const loginUser = async (req: Request, res: Response) => {
     throw new BadRequestException(AUTH_MESSAGES.CredFailed);
   }
 
-  const token = GenerateAccessToken(user._id, user.email, user.username);
+  const token = GenerateAccessToken(user.id, user.email, user.username);
 
   const cookieOptions: CookieOptions = GetJwtCookieOptions();
 
@@ -117,7 +117,7 @@ const loginUser = async (req: Request, res: Response) => {
 
   const returnUser = {
     email: user.email,
-    id: user._id,
+    id: user.id,
     name: user.username,
     role: user.role,
   };

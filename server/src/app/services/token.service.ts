@@ -14,8 +14,8 @@ const ComparePassword = async (password: string, hashedPassword: string) => {
 const GenerateAccessToken = (id: string, email: string, username: string) => {
   return jwt.sign(
     {
-      _id: id,
       email: email,
+      id: id,
       username: username,
     },
     Env.JWT_SECRET,
