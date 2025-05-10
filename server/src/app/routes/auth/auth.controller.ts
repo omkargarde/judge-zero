@@ -159,14 +159,14 @@ const forgotPassword = async (req: Request, res: Response) => {
   //get user by email and send reset token
   const { email } = req.body as IUserRequestBody;
 
-  const user = await UserModel.findOne({ email });
+  const user = await FindUser(email);
   if (!user) {
     return res.status(400).json({
       message: "Invalid email",
     });
   }
   const resetToken = UnHashedToken();
-  await ResetPassword(user, resetToken);
+  await ResetPassword(user.email, resetToken);
 
   await SendForgotPasswordTokenMail(user.email, resetToken);
 

@@ -65,12 +65,16 @@ const VerifyUser = async (email: string) => {
   });
 };
 
-const ResetPassword = async (user: unknown, resetToken: string) => {
-  if (user instanceof UserModel) {
-    user.forgotPasswordToken = resetToken;
-    user.forgotPasswordExpiry = new Date(Date.now() + 10 * 60 * 1000);
-    return await user.save();
-  }
+const ResetPassword = async (email: string, resetToken: string) => {
+  return db.user.update({
+    data: {
+      forgotPasswordExpiry: new Date(Date.now() + 10 * 60 * 1000),
+      forgotPasswordToken: resetToken,
+    },
+    where: {
+      email: email,
+    },
+  });
 };
 
 const SetNewPassword = async (user: unknown, password: string) => {
