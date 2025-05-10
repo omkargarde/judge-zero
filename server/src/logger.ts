@@ -1,8 +1,9 @@
 import winston from "winston";
 
+import { IS_DEVOLVEMENT } from "./app/constants/env.constant.ts";
 import { Env } from "./env.ts";
 
-const logger = winston.createLogger({
+const Logger = winston.createLogger({
   defaultMeta: { service: "user-service" },
   format: winston.format.json(),
   level: "info",
@@ -19,12 +20,12 @@ const logger = winston.createLogger({
     new winston.transports.File({ filename: "combined.log" }),
   ],
 });
-if (Env.NODE_ENV !== "production") {
-  logger.add(
+if (Env.NODE_ENV === IS_DEVOLVEMENT) {
+  Logger.add(
     new winston.transports.Console({
       format: winston.format.simple(),
     })
   );
 }
 
-export { logger };
+export { Logger };

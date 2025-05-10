@@ -25,10 +25,11 @@ import {
   NotFoundException,
   UnprocessableEntityException,
 } from "../../utils/error.util.ts";
-import { UserModel } from "../models/user.model.ts";
 import { AUTH_MESSAGES, UserToken } from "./auth.constant.ts";
 import {
   AddEmailVerificationToken,
+  CreateUser,
+  FindUser,
   FindUserWithToken,
   ResetPassword,
   SetNewPassword,
@@ -40,21 +41,18 @@ const registerUser = async (req: Request, res: Response) => {
   const { email, name, password } = req.body as IUserRequestBody;
 
   try {
-    const existingUser = await UserModel.findOne({ email });
+    const existingUser = await FindUser(email);
     if (existingUser) {
       throw new ConflictException(AUTH_MESSAGES.UserConflict);
     }
-    const user = await UserModel.create({
-      email,
-      name,
-      password,
-    });
+    const user = await CreateUser(email, name, password);
 
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     if (!user) {
       throw new UnprocessableEntityException(AUTH_MESSAGES.FailedUserCreation);
     }
 
-    await AddEmailVerificationToken(user);
+    await AddEmailVerificationToken(email);
 
     if (!user.emailVerificationToken || !user.email) {
       throw new InternalServerErrorException("failed to add token or email");

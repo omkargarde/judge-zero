@@ -7,11 +7,14 @@
   "scripts": {
     "build": "tsc -p .",
     "start": "node dist/index.js",
-    "dev": "node --watch 'src/**/*.ts' --env-file=.env --exec 'ts-node' src/index.ts",
+    "dev": "node --watch --env-file=.env --experimental-strip-types src/index.ts",
     "lint": "eslint .",
     "lint:fix": "eslint --fix .",
     "p:format": "prisma format",
-    "p:validate": "prisma validate"
+    "p:validate": "prisma validate",
+    "p:generate": "prisma generate",
+    "p:dev": "prisma migrate dev",
+    "p:push": "prisma db push"
   },
   "keywords": [],
   "author": "",
@@ -24,30 +27,30 @@
     "express": "^5.1.0",
     "prisma": "^6.7.0",
     "winston": "^3.17.0",
-    "zod": "^3.24.3"
+    "zod": "^3.24.4"
   },
   "devDependencies": {
-    "@eslint/js": "^9.25.1",
+    "@eslint/js": "^9.26.0",
     "@eslint/json": "^0.12.0",
     "@stylistic/eslint-plugin": "^4.2.0",
     "@types/bcrypt": "^5.0.2",
-    "@types/cors": "^2.8.17",
+    "@types/cors": "^2.8.18",
     "@types/express": "^5.0.1",
     "@types/express-validator": "3.0.2",
     "@types/jsonwebtoken": "^9.0.9",
-    "@types/node": "^22.14.1",
+    "@types/node": "^22.15.17",
     "@types/nodemailer": "^6.4.17",
-    "@typescript-eslint/eslint-plugin": "^8.29.1",
-    "@typescript-eslint/parser": "^8.29.1",
-    "eslint": "^9.25.1",
-    "eslint-config-prettier": "^10.1.2",
-    "eslint-plugin-perfectionist": "^4.11.0",
+    "@typescript-eslint/eslint-plugin": "^8.32.0",
+    "@typescript-eslint/parser": "^8.32.0",
+    "eslint": "^9.26.0",
+    "eslint-config-prettier": "^10.1.5",
+    "eslint-plugin-perfectionist": "^4.12.3",
     "express-validator": "7.2.1",
-    "globals": "^16.0.0",
+    "globals": "^16.1.0",
     "install": "^0.13.0",
     "prettier": "^3.5.3",
     "ts-node": "^10.9.2",
     "typescript": "^5.8.3",
-    "typescript-eslint": "^8.31.0"
+    "typescript-eslint": "^8.32.0"
   }
 }

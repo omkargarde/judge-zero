@@ -1,9 +1,11 @@
+import { db } from "../../../libs/db.ts";
 import { UnHashedToken } from "../../services/token.service.ts";
-import { UserModel } from "../models/user.model.ts";
 
 const FindUser = async (email: string) => {
-  return await UserModel.findOne({
-    email: { $eq: email },
+  return await db.user.findUnique({
+    where: {
+      email: email,
+    },
   });
 };
 
@@ -12,19 +14,25 @@ const CreateUser = async (
   password: string,
   username: string
 ) => {
-  return await UserModel.create({
-    email,
-    password,
-    username,
+  return await db.user.create({
+    data: {
+      email,
+      password,
+      username,
+    },
   });
 };
 
-const AddEmailVerificationToken = async (user: unknown) => {
-  if (user instanceof UserModel) {
-    const token = UnHashedToken();
-    user.emailVerificationToken = token;
-    await user.save();
-  }
+const AddEmailVerificationToken = async (email: string) => {
+  const token = UnHashedToken();
+  return await db.user.update({
+    data: {
+      emailVerificationToken: token,
+    },
+    where: {
+      email: "viola@prisma.io",
+    },
+  });
 };
 
 const FindUserWithToken = async (token: string) => {
