@@ -36,19 +36,33 @@ const AddEmailVerificationToken = async (email: string) => {
 };
 
 const FindUserWithToken = async (token: string) => {
-  return await UserModel.findOne({
-    emailVerificationExpiry: { $gt: Date.now() },
-    emailVerificationToken: token,
+  return await db.user.findFirst({
+    where: {
+      AND: [
+        {
+          emailVerificationExpiry: {
+            gt: new Date(),
+          },
+        },
+        {
+          emailVerificationToken: token,
+        },
+      ],
+    },
   });
 };
 
-const VerifyUser = async (user: unknown) => {
-  if (user instanceof UserModel) {
-    user.isEmailVerified = true;
-    user.emailVerificationToken = null;
-    user.emailVerificationExpiry = null;
-    return await user.save();
-  }
+const VerifyUser = async (email: string) => {
+  return await db.user.update({
+    data: {
+      emailVerificationExpiry: null,
+      emailVerificationToken: null,
+      isEmailVerified: true,
+    },
+    where: {
+      email: email,
+    },
+  });
 };
 
 const ResetPassword = async (user: unknown, resetToken: string) => {

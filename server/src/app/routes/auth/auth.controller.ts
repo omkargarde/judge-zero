@@ -84,11 +84,11 @@ const verifyUser = async (req: Request, res: Response) => {
   if (!token) {
     throw new BadRequestException(AUTH_MESSAGES.BadEmailToken);
   }
-  const user = await UserModel.findOne({ verificationToken: token });
+  const user = await FindUserWithToken(token);
   if (!user) {
     throw new BadRequestException(AUTH_MESSAGES.BadEmailToken);
   }
-  await VerifyUser(user);
+  await VerifyUser(user.email);
 
   res
     .status(HTTP_STATUS_CODES.Ok)
