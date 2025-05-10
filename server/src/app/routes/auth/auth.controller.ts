@@ -188,7 +188,7 @@ const resetPassword = async (req: Request, res: Response) => {
   if (!user) {
     throw new NotFoundException(AUTH_MESSAGES.UserNotFound);
   }
-  await SetNewPassword(user, password);
+  await SetNewPassword(user.email, password);
   res
     .status(HTTP_STATUS_CODES.Ok)
     .json(

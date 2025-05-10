@@ -77,13 +77,17 @@ const ResetPassword = async (email: string, resetToken: string) => {
   });
 };
 
-const SetNewPassword = async (user: unknown, password: string) => {
-  if (user instanceof UserModel) {
-    user.password = password;
-    user.forgotPasswordToken = undefined;
-    user.forgotPasswordExpiry = undefined;
-    return await user.save();
-  }
+const SetNewPassword = async (email: string, password: string) => {
+  return db.user.update({
+    data: {
+      forgotPasswordExpiry: null,
+      forgotPasswordToken: null,
+      password: password,
+    },
+    where: {
+      email: email,
+    },
+  });
 };
 
 const GetUser = async (id: string) => {
