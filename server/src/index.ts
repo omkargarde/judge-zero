@@ -2,24 +2,24 @@ import http from "http";
 
 import { CreateApp } from "./app/index.ts";
 import { Env } from "./env.ts";
-import { logger } from "./logger.ts";
+import { Logger } from "./logger.ts";
 
 const main = () => {
   try {
-    let PORT: number;
+    let port: number;
     if (Env.PORT) {
-      PORT = Env.PORT;
+      port = Number(Env.PORT);
     } else {
-      PORT = 8000;
+      port = 8000;
     }
 
     const server = http.createServer();
-    server.listen(PORT, () => {
+    server.listen(port, () => {
       CreateApp();
-      logger.info(`Server is listening on port:${PORT.toString()}`);
+      Logger.info(`Server is listening on port:${port.toString()}`);
     });
   } catch (error) {
-    logger.error("Error occurred while starting server: ", error);
+    Logger.error("Error occurred while starting server: ", error);
     process.exit(1);
   }
 };

@@ -25,11 +25,13 @@ import {
   NotFoundException,
   UnprocessableEntityException,
 } from "../../utils/error.util.ts";
-import { UserModel } from "../models/user.model.ts";
 import { AUTH_MESSAGES, UserToken } from "./auth.constant.ts";
 import {
   AddEmailVerificationToken,
+  CreateUser,
+  FindUser,
   FindUserWithToken,
+  GetUser,
   ResetPassword,
   SetNewPassword,
   VerifyUser,
@@ -40,21 +42,18 @@ const registerUser = async (req: Request, res: Response) => {
   const { email, name, password } = req.body as IUserRequestBody;
 
   try {
-    const existingUser = await UserModel.findOne({ email });
+    const existingUser = await FindUser(email);
     if (existingUser) {
       throw new ConflictException(AUTH_MESSAGES.UserConflict);
     }
-    const user = await UserModel.create({
-      email,
-      name,
-      password,
-    });
+    const user = await CreateUser(email, name, password);
 
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     if (!user) {
       throw new UnprocessableEntityException(AUTH_MESSAGES.FailedUserCreation);
     }
 
-    await AddEmailVerificationToken(user);
+    await AddEmailVerificationToken(email);
 
     if (!user.emailVerificationToken || !user.email) {
       throw new InternalServerErrorException("failed to add token or email");
@@ -86,11 +85,11 @@ const verifyUser = async (req: Request, res: Response) => {
   if (!token) {
     throw new BadRequestException(AUTH_MESSAGES.BadEmailToken);
   }
-  const user = await UserModel.findOne({ verificationToken: token });
+  const user = await FindUserWithToken(token);
   if (!user) {
     throw new BadRequestException(AUTH_MESSAGES.BadEmailToken);
   }
-  await VerifyUser(user);
+  await VerifyUser(user.email);
 
   res
     .status(HTTP_STATUS_CODES.Ok)
@@ -101,7 +100,7 @@ const verifyUser = async (req: Request, res: Response) => {
 
 const loginUser = async (req: Request, res: Response) => {
   const { email, password } = req.body as IUserRequestBody;
-  const user = await UserModel.findOne({ email });
+  const user = await FindUser(email);
   if (!user) {
     throw new BadRequestException(AUTH_MESSAGES.CredFailed);
   }
@@ -111,7 +110,7 @@ const loginUser = async (req: Request, res: Response) => {
     throw new BadRequestException(AUTH_MESSAGES.CredFailed);
   }
 
-  const token = GenerateAccessToken(user._id, user.email, user.username);
+  const token = GenerateAccessToken(user.id, user.email, user.username);
 
   const cookieOptions: CookieOptions = GetJwtCookieOptions();
 
@@ -119,7 +118,7 @@ const loginUser = async (req: Request, res: Response) => {
 
   const returnUser = {
     email: user.email,
-    id: user._id,
+    id: user.id,
     name: user.username,
     role: user.role,
   };
@@ -135,8 +134,7 @@ const loginUser = async (req: Request, res: Response) => {
 };
 
 const getMe = async (req: ICustomRequest, res: Response) => {
-  const user = await UserModel.findById(req.user.id).select("-password");
-
+  const user = await GetUser(req.id);
   if (!user) {
     throw new NotFoundException(AUTH_MESSAGES.UserNotFound);
   }
@@ -161,14 +159,14 @@ const forgotPassword = async (req: Request, res: Response) => {
   //get user by email and send reset token
   const { email } = req.body as IUserRequestBody;
 
-  const user = await UserModel.findOne({ email });
+  const user = await FindUser(email);
   if (!user) {
     return res.status(400).json({
       message: "Invalid email",
     });
   }
   const resetToken = UnHashedToken();
-  await ResetPassword(user, resetToken);
+  await ResetPassword(user.email, resetToken);
 
   await SendForgotPasswordTokenMail(user.email, resetToken);
 
@@ -190,7 +188,7 @@ const resetPassword = async (req: Request, res: Response) => {
   if (!user) {
     throw new NotFoundException(AUTH_MESSAGES.UserNotFound);
   }
-  await SetNewPassword(user, password);
+  await SetNewPassword(user.email, password);
   res
     .status(HTTP_STATUS_CODES.Ok)
     .json(

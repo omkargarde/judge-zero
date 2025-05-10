@@ -1,9 +1,11 @@
+import { db } from "../../../libs/db.ts";
 import { UnHashedToken } from "../../services/token.service.ts";
-import { UserModel } from "../models/user.model.ts";
 
 const FindUser = async (email: string) => {
-  return await UserModel.findOne({
-    email: { $eq: email },
+  return await db.user.findUnique({
+    where: {
+      email: email,
+    },
   });
 };
 
@@ -12,58 +14,108 @@ const CreateUser = async (
   password: string,
   username: string
 ) => {
-  return await UserModel.create({
-    email,
-    password,
-    username,
+  return await db.user.create({
+    data: {
+      email,
+      password,
+      username,
+    },
   });
 };
 
-const AddEmailVerificationToken = async (user: unknown) => {
-  if (user instanceof UserModel) {
-    const token = UnHashedToken();
-    user.emailVerificationToken = token;
-    await user.save();
-  }
+const AddEmailVerificationToken = async (email: string) => {
+  const token = UnHashedToken();
+  return await db.user.update({
+    data: {
+      emailVerificationToken: token,
+    },
+    where: {
+      email: email,
+    },
+  });
 };
 
 const FindUserWithToken = async (token: string) => {
-  return await UserModel.findOne({
-    emailVerificationExpiry: { $gt: Date.now() },
-    emailVerificationToken: token,
+  return await db.user.findFirst({
+    where: {
+      AND: [
+        {
+          emailVerificationExpiry: {
+            gt: new Date(),
+          },
+        },
+        {
+          emailVerificationToken: token,
+        },
+      ],
+    },
   });
 };
 
-const VerifyUser = async (user: unknown) => {
-  if (user instanceof UserModel) {
-    user.isEmailVerified = true;
-    user.emailVerificationToken = null;
-    user.emailVerificationExpiry = null;
-    return await user.save();
-  }
+const VerifyUser = async (email: string) => {
+  return await db.user.update({
+    data: {
+      emailVerificationExpiry: null,
+      emailVerificationToken: null,
+      isEmailVerified: true,
+    },
+    where: {
+      email: email,
+    },
+  });
 };
 
-const ResetPassword = async (user: unknown, resetToken: string) => {
-  if (user instanceof UserModel) {
-    user.forgotPasswordToken = resetToken;
-    user.forgotPasswordExpiry = new Date(Date.now() + 10 * 60 * 1000);
-    return await user.save();
-  }
+const ResetPassword = async (email: string, resetToken: string) => {
+  return db.user.update({
+    data: {
+      forgotPasswordExpiry: new Date(Date.now() + 10 * 60 * 1000),
+      forgotPasswordToken: resetToken,
+    },
+    where: {
+      email: email,
+    },
+  });
 };
 
-const SetNewPassword = async (user: unknown, password: string) => {
-  if (user instanceof UserModel) {
-    user.password = password;
-    user.forgotPasswordToken = undefined;
-    user.forgotPasswordExpiry = undefined;
-    return await user.save();
-  }
+const SetNewPassword = async (email: string, password: string) => {
+  return db.user.update({
+    data: {
+      forgotPasswordExpiry: null,
+      forgotPasswordToken: null,
+      password: password,
+    },
+    where: {
+      email: email,
+    },
+  });
 };
+
+const GetUser = async (id: string) => {
+  return await db.user.findUnique({
+    select: {
+      createdAt: true,
+      email: true,
+      emailVerificationExpiry: true,
+      emailVerificationToken: true,
+      forgotPasswordExpiry: true,
+      forgotPasswordToken: true,
+      id: true,
+      isEmailVerified: true,
+      updatedAt: true,
+      username: true,
+    },
+    where: {
+      id: id,
+    },
+  });
+};
+
 export {
   AddEmailVerificationToken,
   CreateUser,
   FindUser,
   FindUserWithToken,
+  GetUser,
   ResetPassword,
   SetNewPassword,
   VerifyUser,
