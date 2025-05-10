@@ -31,6 +31,7 @@ import {
   CreateUser,
   FindUser,
   FindUserWithToken,
+  GetUser,
   ResetPassword,
   SetNewPassword,
   VerifyUser,
@@ -133,8 +134,7 @@ const loginUser = async (req: Request, res: Response) => {
 };
 
 const getMe = async (req: ICustomRequest, res: Response) => {
-  const user = await UserModel.findById(req.user.id).select("-password");
-
+  const user = await GetUser(req.id);
   if (!user) {
     throw new NotFoundException(AUTH_MESSAGES.UserNotFound);
   }

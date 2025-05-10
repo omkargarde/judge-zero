@@ -81,11 +81,33 @@ const SetNewPassword = async (user: unknown, password: string) => {
     return await user.save();
   }
 };
+
+const GetUser = async (id: string) => {
+  return await db.user.findUnique({
+    select: {
+      createdAt: true,
+      email: true,
+      emailVerificationExpiry: true,
+      emailVerificationToken: true,
+      forgotPasswordExpiry: true,
+      forgotPasswordToken: true,
+      id: true,
+      isEmailVerified: true,
+      updatedAt: true,
+      username: true,
+    },
+    where: {
+      id: id,
+    },
+  });
+};
+
 export {
   AddEmailVerificationToken,
   CreateUser,
   FindUser,
   FindUserWithToken,
+  GetUser,
   ResetPassword,
   SetNewPassword,
   VerifyUser,
