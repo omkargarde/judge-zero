@@ -14,7 +14,6 @@ const validate =
         query: req.query,
       });
       next();
-      return;
     } catch (error) {
       return res.status(400).json(error);
     }

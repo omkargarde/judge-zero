@@ -36,11 +36,20 @@ import {
   SetNewPassword,
   VerifyUser,
 } from "./auth.service.ts";
+import {
+  userEmailVerificationSchema,
+  userRegistrationSchema,
+} from "./auth.validator.ts";
 
 const registerUser = async (req: Request, res: Response) => {
   //register user
-  const { email, name, password } = req.body as IUserRequestBody;
 
+  const { email, name, password } = req.body as IUserRequestBody;
+  const { token } = req.params;
+  const { success } = userRegistrationSchema.safeParse(req.body);
+  if (!success || !token) {
+    throw new BadRequestException(AUTH_MESSAGES.BadEmailToken);
+  }
   try {
     const existingUser = await FindUser(email);
     if (existingUser) {
@@ -81,10 +90,11 @@ const registerUser = async (req: Request, res: Response) => {
 const verifyUser = async (req: Request, res: Response) => {
   //verify user
   const { token } = req.params;
-  console.log(token);
-  if (!token) {
+  const { success } = userEmailVerificationSchema.safeParse(req.params);
+  if (!success || !token) {
     throw new BadRequestException(AUTH_MESSAGES.BadEmailToken);
   }
+
   const user = await FindUserWithToken(token);
   if (!user) {
     throw new BadRequestException(AUTH_MESSAGES.BadEmailToken);
