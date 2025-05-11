@@ -1,11 +1,7 @@
-import express from "express";
+import { Router } from "express";
 
 import { HealthCheck } from "./health.controller.ts";
 
-const RegisterHealthRoutes = () => {
-  const router = express.Router();
-  router.get("/", HealthCheck);
-  return router;
-};
-
-export { RegisterHealthRoutes };
+const router = Router();
+router.get("/hc", HealthCheck);
+export { router as healthRouter };

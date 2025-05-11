@@ -2,11 +2,11 @@ import type { Application } from "express";
 
 import express from "express";
 
-import { RegisterHealthRoutes } from "./routes/health/health.route.ts";
+import { healthRouter } from "./routes/health/health.route.ts";
 
 const CreateApp = () => {
   const app: Application = express();
-  app.use(RegisterHealthRoutes());
+  app.use("/", healthRouter);
   return app;
 };
 
