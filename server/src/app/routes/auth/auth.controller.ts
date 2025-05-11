@@ -38,17 +38,19 @@ import {
 } from "./auth.service.ts";
 import {
   userEmailVerificationSchema,
+  userForgotPasswordSchema,
+  userLoginSchema,
   userRegistrationSchema,
+  userResetForgottenPasswordSchema,
 } from "./auth.validator.ts";
 
 const registerUser = async (req: Request, res: Response) => {
   //register user
 
   const { email, name, password } = req.body as IUserRequestBody;
-  const { token } = req.params;
   const { success } = userRegistrationSchema.safeParse(req.body);
-  if (!success || !token) {
-    throw new BadRequestException(AUTH_MESSAGES.BadEmailToken);
+  if (!success) {
+    throw new InternalServerErrorException();
   }
   try {
     const existingUser = await FindUser(email);
@@ -110,6 +112,10 @@ const verifyUser = async (req: Request, res: Response) => {
 
 const loginUser = async (req: Request, res: Response) => {
   const { email, password } = req.body as IUserRequestBody;
+  const { success } = userLoginSchema.safeParse(req.body);
+  if (!success) {
+    throw new InternalServerErrorException();
+  }
   const user = await FindUser(email);
   if (!user) {
     throw new BadRequestException(AUTH_MESSAGES.CredFailed);
@@ -168,6 +174,10 @@ const logoutUser = (req: Request, res: Response) => {
 const forgotPassword = async (req: Request, res: Response) => {
   //get user by email and send reset token
   const { email } = req.body as IUserRequestBody;
+  const { success } = userForgotPasswordSchema.safeParse(req.body);
+  if (!success) {
+    throw new BadRequestException(AUTH_MESSAGES.EmailNotProvided);
+  }
 
   const user = await FindUser(email);
   if (!user) {
@@ -190,9 +200,13 @@ const forgotPassword = async (req: Request, res: Response) => {
 const resetPassword = async (req: Request, res: Response) => {
   //reset password
   const { token } = req.params;
-  const { password } = req.body as IUserRequestBody;
   if (!token) {
     throw new BadRequestException(AUTH_MESSAGES.BadToken);
+  }
+  const { password } = req.body as IUserRequestBody;
+  const { success } = userResetForgottenPasswordSchema.safeParse(req.params);
+  if (!success) {
+    throw new InternalServerErrorException();
   }
   const user = await FindUserWithToken(token);
   if (!user) {
