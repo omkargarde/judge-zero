@@ -40,3 +40,24 @@
 {"level":"info","message":"Server is listening on port:8000","service":"user-service"}
 {"level":"info","message":"Server is listening on port:8000","service":"user-service"}
 {"level":"info","message":"Server is listening on port:8000","service":"user-service"}
+{"level":"info","message":"Server is listening on port:8000","service":"user-service"}
+{"level":"info","message":"Server is listening on port:8000","service":"user-service"}
+{"level":"info","message":"Server is listening on port:8000","service":"user-service"}
+{"level":"info","message":"Server is listening on port:8000","service":"user-service"}
+{"level":"info","message":"Server is listening on port:8000","service":"user-service"}
+{"level":"info","message":"Server is listening on port:8000","service":"user-service"}
+{"level":"info","message":"Server is listening on port:8000","service":"user-service"}
+{"level":"info","service":"user-service"}
+{"level":"info","message":"Server is listening on port:8000","service":"user-service"}
+{"level":"info","message":"Server is listening on port:8000","service":"user-service"}
+{"level":"info","service":"user-service"}
+{"level":"info","message":"Server is listening on port:8000","service":"user-service"}
+{"level":"info","service":"user-service"}
+{"level":"info","service":"user-service"}
+{"level":"info","message":"Server is listening on port:8000","service":"user-service"}
+{"level":"info","message":{"email":"omkar@gmail.com","password":"password"},"service":"user-service"}
+{"level":"info","message":"Server is listening on port:8000","service":"user-service"}
+{"level":"info","message":{"email":"omkar@gmail.com","password":"password"},"service":"user-service"}
+{"level":"info","message":"Server is listening on port:8000","service":"user-service"}
+{"level":"info","message":{"email":"omkar@gmail.com","password":"password"},"service":"user-service"}
+{"level":"info","message":"Server is listening on port:8000","service":"user-service"}

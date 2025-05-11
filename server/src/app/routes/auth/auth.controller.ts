@@ -2,10 +2,12 @@
 import type { CookieOptions, Request, Response } from "express";
 
 import bcrypt from "bcryptjs";
+import { loggers } from "winston";
 
 import type { ICustomRequest } from "../../types/custom-request.types.ts";
 import type { IUserRequestBody } from "./auth.type.ts";
 
+import { Logger } from "../../../logger.ts";
 import { HTTP_STATUS_CODES } from "../../constants/status.constant.ts";
 import {
   SendForgotPasswordTokenMail,
@@ -111,11 +113,12 @@ const verifyUser = async (req: Request, res: Response) => {
 };
 
 const loginUser = async (req: Request, res: Response) => {
-  const { email, password } = req.body as IUserRequestBody;
+  Logger.info(req.body);
   const { success } = userLoginSchema.safeParse(req.body);
   if (!success) {
     throw new InternalServerErrorException();
   }
+  const { email, password } = req.body as IUserRequestBody;
   const user = await FindUser(email);
   if (!user) {
     throw new BadRequestException(AUTH_MESSAGES.CredFailed);
