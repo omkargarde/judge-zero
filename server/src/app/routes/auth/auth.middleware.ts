@@ -1,4 +1,6 @@
-import type { NextFunction, Request, Response } from "express";
+import type { NextFunction, Response } from "express";
+
+import type { ICustomRequest } from "../../types/custom-request.types.ts";
 
 import { HTTP_ERROR_MESSAGES } from "../../constants/status.constant.ts";
 import { VerifyToken } from "../../services/token.service.ts";
@@ -9,7 +11,7 @@ import {
 } from "../../utils/error.util.ts";
 import { AUTH_MESSAGES } from "./auth.constant.ts";
 
-const isLoggedIn = (req: Request, res: Response, next: NextFunction) => {
+const isLoggedIn = (req: ICustomRequest, res: Response, next: NextFunction) => {
   try {
     console.log("=== Auth Middleware Debug ===");
     console.log("Cookies:", req.cookies);

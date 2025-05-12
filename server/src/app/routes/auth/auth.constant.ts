@@ -13,6 +13,7 @@ const AUTH_MESSAGES = {
   BadToken: "Token is invalid",
   CredFailed: "Email or Password is incorrect",
   credSuccess: "User login successful",
+  EmailNotProvided: "User email is not provided",
   EmailNotVerified: "Email is not verified",
   FailedUserCreation: "Failed to create user",
   FailedUserTokenCreation: "Failed to create email verification token",

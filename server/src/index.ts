@@ -1,6 +1,4 @@
-import http from "http";
-
-import { CreateApp } from "./app/index.ts";
+import { app } from "./app/index.ts";
 import { Env } from "./env.ts";
 import { Logger } from "./logger.ts";
 
@@ -12,10 +10,7 @@ const main = () => {
     } else {
       port = 8000;
     }
-
-    const server = http.createServer();
-    server.listen(port, () => {
-      CreateApp();
+    app.listen(port, () => {
       Logger.info(`Server is listening on port:${port.toString()}`);
     });
   } catch (error) {

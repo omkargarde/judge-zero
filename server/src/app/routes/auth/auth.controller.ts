@@ -2,10 +2,12 @@
 import type { CookieOptions, Request, Response } from "express";
 
 import bcrypt from "bcryptjs";
+import { loggers } from "winston";
 
 import type { ICustomRequest } from "../../types/custom-request.types.ts";
 import type { IUserRequestBody } from "./auth.type.ts";
 
+import { Logger } from "../../../logger.ts";
 import { HTTP_STATUS_CODES } from "../../constants/status.constant.ts";
 import {
   SendForgotPasswordTokenMail,
@@ -36,32 +38,53 @@ import {
   SetNewPassword,
   VerifyUser,
 } from "./auth.service.ts";
+import {
+  userEmailVerificationSchema,
+  userForgotPasswordSchema,
+  userLoginSchema,
+  userRegistrationSchema,
+  userResetForgottenPasswordSchema,
+} from "./auth.validator.ts";
 
 const registerUser = async (req: Request, res: Response) => {
   //register user
-  const { email, name, password } = req.body as IUserRequestBody;
 
+  const { email, password, username } = req.body as IUserRequestBody;
+  const { success } = userRegistrationSchema.safeParse(req.body);
+  if (!success) {
+    throw new InternalServerErrorException();
+  }
   try {
+    Logger.info("Find if user already exists");
     const existingUser = await FindUser(email);
     if (existingUser) {
       throw new ConflictException(AUTH_MESSAGES.UserConflict);
     }
-    const user = await CreateUser(email, name, password);
 
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    if (!user) {
-      throw new UnprocessableEntityException(AUTH_MESSAGES.FailedUserCreation);
+    Logger.info("creating new user");
+    const user = await CreateUser(email, username, password);
+
+    Logger.info("verifying user");
+    const verificationUser = await AddEmailVerificationToken(user.email);
+
+    if (!verificationUser.emailVerificationToken || !verificationUser.email) {
+      Logger.error("Missing email verification token or email");
+      throw new InternalServerErrorException("Missing token or email");
     }
 
-    await AddEmailVerificationToken(email);
-
-    if (!user.emailVerificationToken || !user.email) {
-      throw new InternalServerErrorException("failed to add token or email");
+    try {
+      await SendVerificationTokenMail(
+        verificationUser.emailVerificationToken,
+        verificationUser.email
+      );
+    } catch (mailError) {
+      Logger.error("Failed to send verification email", mailError);
+      throw new InternalServerErrorException(
+        "Failed to send verification email"
+      );
     }
 
-    await SendVerificationTokenMail(user.emailVerificationToken, user.email);
-
-    res
+    return res
       .status(HTTP_STATUS_CODES.Ok)
       .json(
         new ApiResponse(
@@ -71,22 +94,32 @@ const registerUser = async (req: Request, res: Response) => {
         )
       );
   } catch (error) {
-    throw new UnprocessableEntityException(
-      AUTH_MESSAGES.FailedUserCreation,
-      error
-    );
+    Logger.error("User registration failed:", error);
+    if (
+      error instanceof ConflictException ||
+      error instanceof UnprocessableEntityException ||
+      error instanceof InternalServerErrorException
+    ) {
+      throw error;
+    }
+    throw new UnprocessableEntityException(AUTH_MESSAGES.FailedUserCreation);
   }
 };
 
 const verifyUser = async (req: Request, res: Response) => {
   //verify user
   const { token } = req.params;
-  console.log(token);
-  if (!token) {
+  const { success } = userEmailVerificationSchema.safeParse(req.params);
+  if (!success || !token) {
     throw new BadRequestException(AUTH_MESSAGES.BadEmailToken);
   }
+
   const user = await FindUserWithToken(token);
-  if (!user) {
+  if (
+    !user ||
+    !user.emailVerificationToken ||
+    user.emailVerificationExpiry < new Date()
+  ) {
     throw new BadRequestException(AUTH_MESSAGES.BadEmailToken);
   }
   await VerifyUser(user.email);
@@ -99,6 +132,11 @@ const verifyUser = async (req: Request, res: Response) => {
 };
 
 const loginUser = async (req: Request, res: Response) => {
+  Logger.info(req.body);
+  const { success } = userLoginSchema.safeParse(req.body);
+  if (!success) {
+    throw new InternalServerErrorException();
+  }
   const { email, password } = req.body as IUserRequestBody;
   const user = await FindUser(email);
   if (!user) {
@@ -158,6 +196,10 @@ const logoutUser = (req: Request, res: Response) => {
 const forgotPassword = async (req: Request, res: Response) => {
   //get user by email and send reset token
   const { email } = req.body as IUserRequestBody;
+  const { success } = userForgotPasswordSchema.safeParse(req.body);
+  if (!success) {
+    throw new BadRequestException(AUTH_MESSAGES.EmailNotProvided);
+  }
 
   const user = await FindUser(email);
   if (!user) {
@@ -180,9 +222,13 @@ const forgotPassword = async (req: Request, res: Response) => {
 const resetPassword = async (req: Request, res: Response) => {
   //reset password
   const { token } = req.params;
-  const { password } = req.body as IUserRequestBody;
   if (!token) {
     throw new BadRequestException(AUTH_MESSAGES.BadToken);
+  }
+  const { password } = req.body as IUserRequestBody;
+  const { success } = userResetForgottenPasswordSchema.safeParse(req.params);
+  if (!success) {
+    throw new InternalServerErrorException();
   }
   const user = await FindUserWithToken(token);
   if (!user) {

@@ -1,4 +1,5 @@
 import { db } from "../../../libs/db.ts";
+import { Logger } from "../../../logger.ts";
 import { UnHashedToken } from "../../services/token.service.ts";
 
 const FindUser = async (email: string) => {
@@ -14,20 +15,26 @@ const CreateUser = async (
   password: string,
   username: string
 ) => {
-  return await db.user.create({
-    data: {
-      email,
-      password,
-      username,
-    },
-  });
+  try {
+    return await db.user.create({
+      data: {
+        email: email,
+        password: password,
+        username: username,
+      },
+    });
+  } catch (error) {
+    Logger.error(error);
+    throw error;
+  }
 };
 
 const AddEmailVerificationToken = async (email: string) => {
   const token = UnHashedToken();
   return await db.user.update({
     data: {
-      emailVerificationToken: token,
+      emailVerificationExpiry:new Date(Date.now() + 10 * 60 * 1000),
+      emailVerificationToken: token, 
     },
     where: {
       email: email,

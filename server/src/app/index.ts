@@ -1,13 +1,25 @@
 import type { Application } from "express";
 
-import express from "express";
+import cors from "cors";
+import express, { urlencoded } from "express";
 
-import { RegisterHealthRoutes } from "./routes/health/health.route.ts";
+import { Env } from "../env.ts";
+import { authRouter } from "./routes/auth/auth.route.ts";
+import { healthRouter } from "./routes/health/health.route.ts";
 
-const CreateApp = () => {
-  const app: Application = express();
-  app.use(RegisterHealthRoutes());
-  return app;
-};
+const app: Application = express();
 
-export { CreateApp };
+app.use(express.json());
+app.use(urlencoded({ extended: true }));
+app.use(
+  cors({
+    allowedHeaders: ["Content-Type", "Authorization"],
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    origin: Env.CORS_ORIGIN,
+  })
+);
+
+app.use("/", healthRouter);
+app.use("/v1/api/auth", authRouter);
+
+export { app };
