@@ -14,7 +14,8 @@
     "p:validate": "prisma validate",
     "p:generate": "prisma generate",
     "p:dev": "prisma migrate dev",
-    "p:push": "prisma db push"
+    "p:push": "prisma db push",
+    "p:studio": "pnpm dlx prisma studio"
   },
   "keywords": [],
   "author": "",

@@ -49,32 +49,42 @@ import {
 const registerUser = async (req: Request, res: Response) => {
   //register user
 
-  const { email, name, password } = req.body as IUserRequestBody;
+  const { email, password, username } = req.body as IUserRequestBody;
   const { success } = userRegistrationSchema.safeParse(req.body);
   if (!success) {
     throw new InternalServerErrorException();
   }
   try {
+    Logger.info("Find if user already exists");
     const existingUser = await FindUser(email);
     if (existingUser) {
       throw new ConflictException(AUTH_MESSAGES.UserConflict);
     }
-    const user = await CreateUser(email, name, password);
 
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    if (!user) {
-      throw new UnprocessableEntityException(AUTH_MESSAGES.FailedUserCreation);
+    Logger.info("creating new user");
+    const user = await CreateUser(email, username, password);
+
+    Logger.info("verifying user");
+    const verificationUser = await AddEmailVerificationToken(user.email);
+
+    if (!verificationUser.emailVerificationToken || !verificationUser.email) {
+      Logger.error("Missing email verification token or email");
+      throw new InternalServerErrorException("Missing token or email");
     }
 
-    await AddEmailVerificationToken(email);
-
-    if (!user.emailVerificationToken || !user.email) {
-      throw new InternalServerErrorException("failed to add token or email");
+    try {
+      await SendVerificationTokenMail(
+        verificationUser.emailVerificationToken,
+        verificationUser.email
+      );
+    } catch (mailError) {
+      Logger.error("Failed to send verification email", mailError);
+      throw new InternalServerErrorException(
+        "Failed to send verification email"
+      );
     }
 
-    await SendVerificationTokenMail(user.emailVerificationToken, user.email);
-
-    res
+    return res
       .status(HTTP_STATUS_CODES.Ok)
       .json(
         new ApiResponse(
@@ -84,10 +94,15 @@ const registerUser = async (req: Request, res: Response) => {
         )
       );
   } catch (error) {
-    throw new UnprocessableEntityException(
-      AUTH_MESSAGES.FailedUserCreation,
-      error
-    );
+    Logger.error("User registration failed:", error);
+    if (
+      error instanceof ConflictException ||
+      error instanceof UnprocessableEntityException ||
+      error instanceof InternalServerErrorException
+    ) {
+      throw error;
+    }
+    throw new UnprocessableEntityException(AUTH_MESSAGES.FailedUserCreation);
   }
 };
 

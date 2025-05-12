@@ -1,13 +1,16 @@
+import { env } from "node:process";
 import nodemailer from "nodemailer";
 
 import { Env } from "../../env.ts";
 const SendVerificationTokenMail = async (token: string, email: string) => {
+  // Looking to send emails in production? Check out our Email API/SMTP product!
   const transporter = nodemailer.createTransport({
     auth: {
       pass: Env.MAILTRAP_PASSWORD,
       user: Env.MAILTRAP_USERNAME,
     },
     host: Env.MAILTRAP_HOST,
+    port: env.MAILTRAP_PORT,
   });
 
   const mailOptions = {
