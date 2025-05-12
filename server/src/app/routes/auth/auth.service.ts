@@ -33,7 +33,8 @@ const AddEmailVerificationToken = async (email: string) => {
   const token = UnHashedToken();
   return await db.user.update({
     data: {
-      emailVerificationToken: token,
+      emailVerificationExpiry:new Date(Date.now() + 10 * 60 * 1000),
+      emailVerificationToken: token, 
     },
     where: {
       email: email,

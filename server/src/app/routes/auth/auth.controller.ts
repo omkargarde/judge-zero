@@ -115,7 +115,11 @@ const verifyUser = async (req: Request, res: Response) => {
   }
 
   const user = await FindUserWithToken(token);
-  if (!user) {
+  if (
+    !user ||
+    !user.emailVerificationToken ||
+    user.emailVerificationExpiry < new Date()
+  ) {
     throw new BadRequestException(AUTH_MESSAGES.BadEmailToken);
   }
   await VerifyUser(user.email);
