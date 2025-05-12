@@ -118,6 +118,7 @@ const verifyUser = async (req: Request, res: Response) => {
   if (
     !user ||
     !user.emailVerificationToken ||
+    !user.emailVerificationExpiry ||
     user.emailVerificationExpiry < new Date()
   ) {
     throw new BadRequestException(AUTH_MESSAGES.BadEmailToken);
