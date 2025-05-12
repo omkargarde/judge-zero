@@ -2,9 +2,9 @@ import { env } from "node:process";
 import nodemailer from "nodemailer";
 
 import { Env } from "../../env.ts";
-const SendVerificationTokenMail = async (token: string, email: string) => {
-  // Looking to send emails in production? Check out our Email API/SMTP product!
-  const transporter = nodemailer.createTransport({
+
+const getTransporter = () => {
+  return nodemailer.createTransport({
     auth: {
       pass: Env.MAILTRAP_PASSWORD,
       user: Env.MAILTRAP_USERNAME,
@@ -12,6 +12,10 @@ const SendVerificationTokenMail = async (token: string, email: string) => {
     host: Env.MAILTRAP_HOST,
     port: env.MAILTRAP_PORT,
   });
+};
+
+const SendVerificationTokenMail = async (token: string, email: string) => {
+  const transporter = getTransporter();
 
   const mailOptions = {
     from: Env.MAILTRAP_SENDER_EMAIL,
@@ -27,13 +31,8 @@ const SendForgotPasswordTokenMail = async (
   resetToken: string,
   email: string
 ) => {
-  const transporter = nodemailer.createTransport({
-    auth: {
-      pass: Env.MAILTRAP_PASSWORD,
-      user: Env.MAILTRAP_USERNAME,
-    },
-    host: Env.MAILTRAP_HOST,
-  });
+  const transporter = getTransporter();
+
   const mailOptions = {
     from: Env.MAILTRAP_SENDER_EMAIL,
     subject: "Reset your password",

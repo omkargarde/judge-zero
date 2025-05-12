@@ -1,6 +1,6 @@
 import { db } from "../../../libs/db.ts";
 import { Logger } from "../../../logger.ts";
-import { UnHashedToken } from "../../services/token.service.ts";
+import { hashPassword, UnHashedToken } from "../../services/token.service.ts";
 
 const FindUser = async (email: string) => {
   return await db.user.findUnique({
@@ -16,10 +16,11 @@ const CreateUser = async (
   username: string
 ) => {
   try {
+    const hashedPassword = await hashPassword(password);
     return await db.user.create({
       data: {
         email: email,
-        password: password,
+        password: hashedPassword,
         username: username,
       },
     });

@@ -62,7 +62,7 @@ const registerUser = async (req: Request, res: Response) => {
     }
 
     Logger.info("creating new user");
-    const user = await CreateUser(email, username, password);
+    const user = await CreateUser(email, password, username);
 
     Logger.info("verifying user");
     const verificationUser = await AddEmailVerificationToken(user.email);
