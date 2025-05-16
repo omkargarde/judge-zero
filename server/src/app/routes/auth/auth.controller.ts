@@ -2,7 +2,6 @@
 import type { CookieOptions, Request, Response } from "express";
 
 import bcrypt from "bcryptjs";
-import { loggers } from "winston";
 
 import type { ICustomRequest } from "../../types/custom-request.types.ts";
 import type { IUserRequestBody } from "./auth.type.ts";
@@ -204,9 +203,7 @@ const forgotPassword = async (req: Request, res: Response) => {
 
   const user = await FindUser(email);
   if (!user) {
-    return res.status(400).json({
-      message: "Invalid email",
-    });
+    throw new BadRequestException(AUTH_MESSAGES.InvalidEmail);
   }
   const resetToken = UnHashedToken();
   await ResetPassword(user.email, resetToken);
