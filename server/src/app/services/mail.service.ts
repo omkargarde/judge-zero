@@ -2,6 +2,7 @@ import { env } from "node:process";
 import nodemailer from "nodemailer";
 
 import { Env } from "../../env.ts";
+import { Logger } from "../../logger.ts";
 
 const getTransporter = () => {
   return nodemailer.createTransport({
@@ -10,7 +11,7 @@ const getTransporter = () => {
       user: Env.MAILTRAP_USERNAME,
     },
     host: Env.MAILTRAP_HOST,
-    port: env.MAILTRAP_PORT,
+    port: Env.MAILTRAP_PORT,
   });
 };
 
@@ -24,7 +25,12 @@ const SendVerificationTokenMail = async (token: string, email: string) => {
     to: email,
   };
 
-  await transporter.sendMail(mailOptions);
+  try {
+    await transporter.sendMail(mailOptions);
+  } catch (error) {
+    Logger.error("Failed to send verification email:", error);
+    throw new Error("Failed to send verification email");
+  }
 };
 
 const SendForgotPasswordTokenMail = async (
@@ -39,7 +45,12 @@ const SendForgotPasswordTokenMail = async (
     text: `Please click on the following link to reset your password: ${Env.BASE_URL}/api/v1/users/reset-password/${resetToken}`,
     to: email,
   };
-  await transporter.sendMail(mailOptions);
+  try {
+    await transporter.sendMail(mailOptions);
+  } catch (error) {
+    Logger.error("Failed to send password reset email:", error);
+    throw new Error("Failed to send password reset email");
+  }
 };
 
 export { SendForgotPasswordTokenMail, SendVerificationTokenMail };

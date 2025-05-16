@@ -86,16 +86,22 @@ const ResetPassword = async (email: string, resetToken: string) => {
 };
 
 const SetNewPassword = async (email: string, password: string) => {
-  return db.user.update({
-    data: {
-      forgotPasswordExpiry: null,
-      forgotPasswordToken: null,
-      password: password,
-    },
-    where: {
-      email: email,
-    },
-  });
+  try {
+    const hashedPassword = await hashPassword(password);
+    return await db.user.update({
+      data: {
+        forgotPasswordExpiry: null,
+        forgotPasswordToken: null,
+        password: hashedPassword,
+      },
+      where: {
+        email: email,
+      },
+    });
+  } catch (error) {
+    Logger.error(error);
+    throw error;
+  }
 };
 
 const GetUser = async (id: string) => {

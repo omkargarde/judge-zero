@@ -19,6 +19,7 @@ const AUTH_MESSAGES = {
   FailedUserTokenCreation: "Failed to create email verification token",
   ForgotPassword: "User sent password reset link",
   forgotPasswordSuccess: "Password has been updated successfully",
+  InvalidEmail: "Email is invalid",
   SucceededUserCreation: "User register successfully, Please verify your email",
   TokenNotFound: "Token not found",
   UserConflict: "User already exists",
