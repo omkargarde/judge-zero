@@ -19,8 +19,7 @@ const isLoggedIn = (req: Request, res: Response, next: NextFunction) => {
       cookie: req.headers.cookie,
     });
 
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    let token = req.cookies?.token as string;
+    let token = req.cookies.token as string;
 
     // Check Authorization header if no cookie
     if (!token && req.headers.authorization) {
