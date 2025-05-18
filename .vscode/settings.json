@@ -1,6 +1,6 @@
 {
     "sonarlint.connectedMode.project": {
-        "connectionId": "omkar garde",
-        "projectKey": "omkargarde_angularAdminUI"
+      "connectionId": "omkar garde",
+      "projectKey": "omkargarde_judge-zero"
     }
 }
