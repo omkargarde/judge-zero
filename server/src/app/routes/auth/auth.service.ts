@@ -1,6 +1,6 @@
 import { db } from "../../../libs/db.ts";
 import { Logger } from "../../../logger.ts";
-import { hashPassword, UnHashedToken } from "../../services/token.service.ts";
+import { HashPassword, UnHashedToken } from "../../services/token.service.ts";
 
 const FindUser = async (email: string) => {
   return await db.user.findUnique({
@@ -16,7 +16,7 @@ const CreateUser = async (
   username: string
 ) => {
   try {
-    const hashedPassword = await hashPassword(password);
+    const hashedPassword = await HashPassword(password);
     return await db.user.create({
       data: {
         email: email,
@@ -34,8 +34,8 @@ const AddEmailVerificationToken = async (email: string) => {
   const token = UnHashedToken();
   return await db.user.update({
     data: {
-      emailVerificationExpiry:new Date(Date.now() + 10 * 60 * 1000),
-      emailVerificationToken: token, 
+      emailVerificationExpiry: new Date(Date.now() + 10 * 60 * 1000),
+      emailVerificationToken: token,
     },
     where: {
       email: email,
@@ -87,7 +87,7 @@ const ResetPassword = async (email: string, resetToken: string) => {
 
 const SetNewPassword = async (email: string, password: string) => {
   try {
-    const hashedPassword = await hashPassword(password);
+    const hashedPassword = await HashPassword(password);
     return await db.user.update({
       data: {
         forgotPasswordExpiry: null,

@@ -28,7 +28,7 @@ const isLoggedIn = (req: Request, res: Response, next: NextFunction) => {
     if (!token) {
       throw new NotFoundException(AUTH_MESSAGES.TokenNotFound);
     }
-    Logger.info("token found", token);
+    Logger.info("Authentication token found"); 
     try {
       // Verify token
       const decoded = VerifyToken(token);
