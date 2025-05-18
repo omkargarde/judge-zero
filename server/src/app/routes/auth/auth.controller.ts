@@ -153,6 +153,7 @@ const loginUser = async (req: Request, res: Response) => {
   const returnUser = {
     email: user.email,
     id: user.id,
+    image: user.avatarUrl,
     name: user.username,
     role: user.role,
   };
