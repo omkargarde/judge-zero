@@ -11,7 +11,7 @@ const ComparePassword = async (password: string, hashedPassword: string) => {
   return await bcrypt.compare(password, hashedPassword);
 };
 
-const hashPassword = async (password: string) => {
+const HashPassword = async (password: string) => {
   return await bcrypt.hash(password, Number(Env.SALT_ROUNDS));
 };
 
@@ -41,7 +41,7 @@ const HashedToken = (unHashedToken: crypto.BinaryLike) => {
 const GetJwtCookieOptions = () => {
   return {
     httpOnly: Env.NODE_ENV === IS_PRODUCTION, // Set to false for testing
-    maxAge: 24 * 60 * 60 * 1000, // directly use the max age value
+    maxAge: Number(Env.JWT_MAX_AGE), // use environment variable for configurability
     path: "/",
     sameSite: "lax" as TSameSite,
     secure: Env.NODE_ENV === IS_PRODUCTION, // Set to false for local development
@@ -64,7 +64,7 @@ export {
   GenerateAccessToken,
   GetJwtCookieOptions,
   HashedToken,
-  hashPassword,
+  HashPassword,
   UnHashedToken,
   VerifyToken,
 };
