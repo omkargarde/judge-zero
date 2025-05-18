@@ -3,11 +3,13 @@ import type { CookieOptions, Request, Response } from "express";
 
 import bcrypt from "bcryptjs";
 
-import type { ICustomRequest } from "../../types/custom-request.types.ts";
 import type { IUserRequestBody } from "./auth.type.ts";
 
 import { Logger } from "../../../logger.ts";
-import { HTTP_STATUS_CODES } from "../../constants/status.constant.ts";
+import {
+  HTTP_ERROR_MESSAGES,
+  HTTP_STATUS_CODES,
+} from "../../constants/status.constant.ts";
 import {
   SendForgotPasswordTokenMail,
   SendVerificationTokenMail,
@@ -24,7 +26,6 @@ import {
   ConflictException,
   InternalServerErrorException,
   NotFoundException,
-  UnprocessableEntityException,
 } from "../../utils/error.util.ts";
 import { AUTH_MESSAGES, UserToken } from "./auth.constant.ts";
 import {
@@ -93,15 +94,10 @@ const registerUser = async (req: Request, res: Response) => {
         )
       );
   } catch (error) {
-    Logger.error("User registration failed:", error);
-    if (
-      error instanceof ConflictException ||
-      error instanceof UnprocessableEntityException ||
-      error instanceof InternalServerErrorException
-    ) {
-      throw error;
-    }
-    throw new UnprocessableEntityException(AUTH_MESSAGES.FailedUserCreation);
+    throw new InternalServerErrorException(
+      HTTP_ERROR_MESSAGES.InternalServerError,
+      error
+    );
   }
 };
 
@@ -171,7 +167,7 @@ const loginUser = async (req: Request, res: Response) => {
     );
 };
 
-const getMe = async (req: ICustomRequest, res: Response) => {
+const getMe = async (req: Request, res: Response) => {
   const user = await GetUser(req.id);
   if (!user) {
     throw new NotFoundException(AUTH_MESSAGES.UserNotFound);

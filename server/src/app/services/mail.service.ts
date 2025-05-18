@@ -1,4 +1,3 @@
-import { env } from "node:process";
 import nodemailer from "nodemailer";
 
 import { Env } from "../../env.ts";

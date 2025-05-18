@@ -1,7 +1,6 @@
-import type { NextFunction, Response } from "express";
+import type { NextFunction, Request, Response } from "express";
 
-import type { ICustomRequest } from "../../types/custom-request.types.ts";
-
+import { Logger } from "../../../logger.ts";
 import { HTTP_ERROR_MESSAGES } from "../../constants/status.constant.ts";
 import { VerifyToken } from "../../services/token.service.ts";
 import {
@@ -11,7 +10,7 @@ import {
 } from "../../utils/error.util.ts";
 import { AUTH_MESSAGES } from "./auth.constant.ts";
 
-const isLoggedIn = (req: ICustomRequest, res: Response, next: NextFunction) => {
+const isLoggedIn = (req: Request, res: Response, next: NextFunction) => {
   try {
     console.log("=== Auth Middleware Debug ===");
     console.log("Cookies:", req.cookies);
@@ -30,7 +29,7 @@ const isLoggedIn = (req: ICustomRequest, res: Response, next: NextFunction) => {
     if (!token) {
       throw new NotFoundException(AUTH_MESSAGES.TokenNotFound);
     }
-
+    Logger.info("token found", token);
     try {
       // Verify token
       const decoded = VerifyToken(token);
