@@ -1,5 +1,6 @@
 import type { Application } from "express";
 
+import cookieParser from "cookie-parser";
 import cors from "cors";
 import express, { urlencoded } from "express";
 
@@ -11,6 +12,7 @@ const app: Application = express();
 
 app.use(express.json());
 app.use(urlencoded({ extended: true }));
+app.use(cookieParser());
 app.use(
   cors({
     allowedHeaders: ["Content-Type", "Authorization"],
