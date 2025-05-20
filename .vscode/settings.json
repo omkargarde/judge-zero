@@ -53,5 +53,8 @@
     "scss",
     "pcss",
     "postcss"
+  ],
+  "cSpell.words": [
+    "sqltag"
   ]
 }

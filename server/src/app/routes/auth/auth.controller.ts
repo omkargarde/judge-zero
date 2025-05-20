@@ -1,7 +1,6 @@
 // user controllers
 import type { CookieOptions, Request, Response } from 'express'
 
-import type { IUserRequestBody } from './auth.type.ts'
 
 import bcrypt from 'bcryptjs'
 
@@ -48,7 +47,7 @@ import {
 
 async function registerUser(req: Request, res: Response) {
 
-  const { email, password, username } = req.body as IUserRequestBody
+  const { email, password, username } = req.body 
   const { success } = userRegistrationSchema.safeParse(req.body)
   if (!success) {
     throw new InternalServerErrorException()
@@ -147,7 +146,7 @@ async function loginUser(req: Request, res: Response) {
   if (!success) {
     throw new InternalServerErrorException()
   }
-  const { email, password } = req.body as IUserRequestBody
+  const { email, password } = req.body 
 
   const user = await FindUser(email)
   if (!user) {
@@ -207,7 +206,7 @@ function logoutUser(req: Request, res: Response) {
 
 async function forgotPassword(req: Request, res: Response) {
   // get user by email and send reset token
-  const { email } = req.body as IUserRequestBody
+  const { email } = req.body 
   const { success } = userForgotPasswordSchema.safeParse(req.body)
   if (!success) {
     throw new BadRequestException(AUTH_MESSAGES.EmailNotProvided)
@@ -235,7 +234,7 @@ async function resetPassword(req: Request, res: Response) {
   if (token === null || token === undefined || token === '') {
     throw new BadRequestException(AUTH_MESSAGES.BadToken)
   }
-  const { password } = req.body as IUserRequestBody
+  const { password } = req.body 
   const { success } = userResetForgottenPasswordSchema.safeParse(req.params)
   if (!success) {
     throw new InternalServerErrorException()
