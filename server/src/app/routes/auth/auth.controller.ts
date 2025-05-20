@@ -47,7 +47,6 @@ import {
 } from './auth.validator.ts'
 
 async function registerUser(req: Request, res: Response) {
-  // register user
 
   const { email, password, username } = req.body as IUserRequestBody
   const { success } = userRegistrationSchema.safeParse(req.body)
@@ -90,7 +89,7 @@ async function registerUser(req: Request, res: Response) {
       )
     }
 
-    return res
+    res
       .status(HTTP_STATUS_CODES.Ok)
       .json(
         new ApiResponse(
