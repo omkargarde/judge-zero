@@ -1,4 +1,4 @@
-import { Router } from "express";
+import { Router } from 'express'
 
 import {
   forgotPassword,
@@ -8,17 +8,17 @@ import {
   registerUser,
   resetPassword,
   verifyUser,
-} from "./auth.controller.ts";
-import { isLoggedIn } from "./auth.middleware.ts";
+} from './auth.controller.ts'
+import { isLoggedIn } from './auth.middleware.ts'
 
-const router = Router();
+const router = Router()
 
-router.post("/verify/:token", verifyUser);
-router.post("/login", loginUser);
-router.post("/register", registerUser);
-router.get("/me", isLoggedIn, getMe);
-router.get("/logout", isLoggedIn, logoutUser);
-router.post("/forgot-password", forgotPassword);
-router.post("/reset-password/:token", resetPassword);
+router.post('/verify/:token', verifyUser)
+router.post('/login', loginUser)
+router.post('/register', registerUser)
+router.get('/me', isLoggedIn, getMe)
+router.get('/logout', isLoggedIn, logoutUser)
+router.post('/forgot-password', forgotPassword)
+router.post('/reset-password/:token', resetPassword)
 
-export { router as authRouter };
+export { router as authRouter }

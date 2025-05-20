@@ -1,28 +1,30 @@
 import {
   HTTP_ERROR_MESSAGES,
   HTTP_STATUS_CODES,
-} from "../constants/status.constant.ts";
+} from '../constants/status.constant.ts'
+
 class ApiError extends Error {
-  protected errors;
-  protected statusCode: number;
-  protected success = false;
+  protected errors
+  protected statusCode: number
+  protected success = false
   public constructor(
     statusCode: number = 500,
-    message: string = "Something went wrong",
+    message: string = 'Something went wrong',
     errors: unknown[] = [],
-    stack: string = "",
+    stack: string = '',
   ) {
-    super(message);
-    this.statusCode = statusCode;
-    this.message = message;
-    this.success = false;
-    this.errors = errors;
+    super(message)
+    this.statusCode = statusCode
+    this.message = message
+    this.success = false
+    this.errors = errors
 
     if (stack) {
-      this.stack = stack;
-    } else {
+      this.stack = stack
+    }
+    else {
       // Study this more
-      Error.captureStackTrace(this, this.constructor);
+      Error.captureStackTrace(this, this.constructor)
     }
   }
 }
@@ -32,13 +34,13 @@ class BadRequestException extends ApiError {
     message: string = HTTP_ERROR_MESSAGES.BadRequest,
     error?: unknown,
   ) {
-    super(HTTP_STATUS_CODES.BadRequest, message, [error]);
+    super(HTTP_STATUS_CODES.BadRequest, message, [error])
   }
 }
 
 class ConflictException extends ApiError {
   constructor(message: string = HTTP_ERROR_MESSAGES.Conflict, error?: unknown) {
-    super(HTTP_STATUS_CODES.Conflict, message, [error]);
+    super(HTTP_STATUS_CODES.Conflict, message, [error])
   }
 }
 
@@ -47,7 +49,7 @@ class InternalServerErrorException extends ApiError {
     message: string = HTTP_ERROR_MESSAGES.InternalServerError,
     error?: unknown,
   ) {
-    super(HTTP_STATUS_CODES.InternalServerError, message, [error]);
+    super(HTTP_STATUS_CODES.InternalServerError, message, [error])
   }
 }
 class NotFoundException extends ApiError {
@@ -55,13 +57,13 @@ class NotFoundException extends ApiError {
     message: string = HTTP_ERROR_MESSAGES.Unauthorized,
     error?: unknown,
   ) {
-    super(HTTP_STATUS_CODES.Unauthorized, message, [error]);
+    super(HTTP_STATUS_CODES.Unauthorized, message, [error])
   }
 }
 
 class UnauthorizedException extends ApiError {
   constructor(message: string = HTTP_ERROR_MESSAGES.NotFound, error?: unknown) {
-    super(HTTP_STATUS_CODES.NotFound, message, [error]);
+    super(HTTP_STATUS_CODES.NotFound, message, [error])
   }
 }
 class UnprocessableEntityException extends ApiError {
@@ -69,7 +71,7 @@ class UnprocessableEntityException extends ApiError {
     message: string = HTTP_ERROR_MESSAGES.UnprocessableEntity,
     error?: unknown,
   ) {
-    super(HTTP_STATUS_CODES.UnprocessableEntity, message, [error]);
+    super(HTTP_STATUS_CODES.UnprocessableEntity, message, [error])
   }
 }
 export {
@@ -80,4 +82,4 @@ export {
   NotFoundException,
   UnauthorizedException,
   UnprocessableEntityException,
-};
+}

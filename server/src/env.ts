@@ -1,4 +1,5 @@
-import { z } from "zod";
+import process from 'node:process'
+import { z } from 'zod'
 
 const envSchema = z.object({
   BASE_URL: z.string(),
@@ -16,13 +17,13 @@ const envSchema = z.object({
   NODE_ENV: z.string(),
   PORT: z.string(),
   SALT_ROUNDS: z.string().transform(Number).pipe(z.number().int().positive()),
-});
+})
 
 function createEnv(env: NodeJS.ProcessEnv) {
-  const validationResult = envSchema.safeParse(env);
+  const validationResult = envSchema.safeParse(env)
   if (!validationResult.success)
-    throw new Error(validationResult.error.message);
-  return validationResult.data;
+    throw new Error(validationResult.error.message)
+  return validationResult.data
 }
-// eslint-disable-next-line no-process-env
-export const Env = createEnv(process.env);
+
+export const Env = createEnv(process.env)

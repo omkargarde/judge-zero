@@ -1,7 +1,7 @@
-import type { JwtPayload } from "jsonwebtoken";
+import type { JwtPayload } from 'jsonwebtoken'
 
 interface UserPayload {
-  id: string;
-  user: JwtPayload | string;
+  id: string
+  user: JwtPayload | string
 }
-export type { UserPayload };
+export type { UserPayload }

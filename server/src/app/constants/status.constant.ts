@@ -24,30 +24,30 @@ const HTTP_STATUS_CODES = {
   TooManyRequests: 429,
   Unauthorized: 401,
   UnprocessableEntity: 422,
-} as const;
+} as const
 
 // HTTP Response Status Messages
 const HTTP_STATUS_MESSAGES = {
-  BadRequest: "Bad Request",
-  Created: "Created",
-  Forbidden: "Forbidden",
-  NoContent: "No Content",
-  NotFound: "Not Found",
-  OK: "OK",
-  ServiceAvailable: "Service available",
-  Unauthorized: "Unauthorized",
-} as const;
+  BadRequest: 'Bad Request',
+  Created: 'Created',
+  Forbidden: 'Forbidden',
+  NoContent: 'No Content',
+  NotFound: 'Not Found',
+  OK: 'OK',
+  ServiceAvailable: 'Service available',
+  Unauthorized: 'Unauthorized',
+} as const
 
 // HTTP Response Error Messages
 const HTTP_ERROR_MESSAGES = {
-  BadRequest: "Invalid request",
-  Conflict: "Resource already exists",
-  Forbidden: "Access denied",
-  InternalServerError: "Internal server error",
-  NotFound: "Resource not found",
-  ServiceUnavailable: "Service unavailable",
-  Unauthorized: "Authentication failed",
-  UnprocessableEntity: "Unable to process request",
-} as const;
+  BadRequest: 'Invalid request',
+  Conflict: 'Resource already exists',
+  Forbidden: 'Access denied',
+  InternalServerError: 'Internal server error',
+  NotFound: 'Resource not found',
+  ServiceUnavailable: 'Service unavailable',
+  Unauthorized: 'Authentication failed',
+  UnprocessableEntity: 'Unable to process request',
+} as const
 
-export { HTTP_ERROR_MESSAGES, HTTP_STATUS_CODES, HTTP_STATUS_MESSAGES };
+export { HTTP_ERROR_MESSAGES, HTTP_STATUS_CODES, HTTP_STATUS_MESSAGES }

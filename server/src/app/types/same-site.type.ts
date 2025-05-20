@@ -1,3 +1,3 @@
-type TSameSite = "lax" | "none" | "strict" | boolean | undefined;
+type TSameSite = 'lax' | 'none' | 'strict' | boolean | undefined
 
-export type { TSameSite };
+export type { TSameSite }
