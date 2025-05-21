@@ -3,4 +3,5 @@ onlyBuiltDependencies:
   - '@prisma/engines'
   - esbuild
   - prisma
+  - simple-git-hooks
   - unrs-resolver
