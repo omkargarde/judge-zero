@@ -1,50 +1,56 @@
-import type { NextFunction, Request, Response } from "express";
+import type { NextFunction, Request, Response } from 'express'
 
-import { Logger } from "../../../logger.ts";
-import { HTTP_ERROR_MESSAGES } from "../../constants/status.constant.ts";
-import { VerifyToken } from "../../services/token.service.ts";
+import { Logger } from '../../../logger.ts'
+import { HTTP_ERROR_MESSAGES } from '../../constants/status.constant.ts'
+import { VerifyToken } from '../../services/token.service.ts'
 import {
   InternalServerErrorException,
   NotFoundException,
   UnauthorizedException,
-} from "../../utils/error.util.ts";
-import { AUTH_MESSAGES } from "./auth.constant.ts";
+} from '../../utils/error.util.ts'
+import { AUTH_MESSAGES } from './auth.constant.ts'
 
-const isLoggedIn = (req: Request, res: Response, next: NextFunction) => {
+function isLoggedIn(req: Request, res: Response, next: NextFunction) {
   try {
-    console.log("=== Auth Middleware Debug ===");
-    console.log("Cookies:", req.cookies);
-    console.log("Headers:", {
+    Logger.info('=== Auth Middleware Debug ===')
+    Logger.info('Cookies:', req.cookies)
+    Logger.info('Headers:', {
       authorization: req.headers.authorization,
       cookie: req.headers.cookie,
-    });
+    })
 
-    let token = req.cookies.token as string;
+    let token = req.cookies.token as string
 
     // Check Authorization header if no cookie
-    if (!token && req.headers.authorization) {
-      token = req.headers.authorization.replace("Bearer ", "");
+    if (
+      (!token || token === '')
+      && typeof req.headers.authorization === 'string'
+      && req.headers.authorization !== ''
+    ) {
+      token = req.headers.authorization.replace('Bearer ', '')
     }
-    if (!token) {
-      throw new NotFoundException(AUTH_MESSAGES.TokenNotFound);
+    if (!token || token === '') {
+      throw new NotFoundException(AUTH_MESSAGES.TokenNotFound)
     }
-    Logger.info("Authentication token found"); 
+    Logger.info('Authentication token found')
     try {
       // Verify token
-      const decoded = VerifyToken(token);
-      console.log("Token verified successfully");
+      const decoded = VerifyToken(token)
+      Logger.info('Token verified successfully')
 
-      req.user = decoded;
-      next();
-    } catch (error) {
-      throw new UnauthorizedException(AUTH_MESSAGES.BadToken, error);
+      req.user = decoded
+      next()
     }
-  } catch (error) {
+    catch (error) {
+      throw new UnauthorizedException(AUTH_MESSAGES.BadToken, error)
+    }
+  }
+  catch (error) {
     throw new InternalServerErrorException(
       HTTP_ERROR_MESSAGES.InternalServerError,
-      error
-    );
+      error,
+    )
   }
-};
+}
 
-export { isLoggedIn };
+export { isLoggedIn }

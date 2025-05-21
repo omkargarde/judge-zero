@@ -1,3 +1,7 @@
 .env
 /server/.env
 node_modules
+*.log
+server/combined.log
+combined.log
+/server/*.log

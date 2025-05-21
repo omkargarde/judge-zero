@@ -1,50 +1,47 @@
-import { db } from "../../../libs/db.ts";
-import { Logger } from "../../../logger.ts";
-import { HashPassword, UnHashedToken } from "../../services/token.service.ts";
+import { db } from '../../../libs/db.ts'
+import { Logger } from '../../../logger.ts'
+import { HashPassword, UnHashedToken } from '../../services/token.service.ts'
 
-const FindUser = async (email: string) => {
-  return await db.user.findUnique({
+async function FindUser(email: string) {
+  return db.user.findUnique({
     where: {
-      email: email,
+      email,
     },
-  });
-};
+  })
+}
 
-const CreateUser = async (
-  email: string,
-  password: string,
-  username: string
-) => {
+async function CreateUser(email: string, password: string, username: string) {
   try {
-    const hashedPassword = await HashPassword(password);
+    const hashedPassword = await HashPassword(password)
     return await db.user.create({
       data: {
-        email: email,
+        email,
         password: hashedPassword,
-        username: username,
+        username,
       },
-    });
-  } catch (error) {
-    Logger.error(error);
-    throw error;
+    })
   }
-};
+  catch (error) {
+    Logger.error(error)
+    throw error
+  }
+}
 
-const AddEmailVerificationToken = async (email: string) => {
-  const token = UnHashedToken();
-  return await db.user.update({
+async function AddEmailVerificationToken(email: string) {
+  const token = UnHashedToken()
+  return db.user.update({
     data: {
       emailVerificationExpiry: new Date(Date.now() + 10 * 60 * 1000),
       emailVerificationToken: token,
     },
     where: {
-      email: email,
+      email,
     },
-  });
-};
+  })
+}
 
-const FindUserWithToken = async (token: string) => {
-  return await db.user.findFirst({
+async function FindUserWithToken(token: string) {
+  return db.user.findFirst({
     where: {
       AND: [
         {
@@ -57,37 +54,37 @@ const FindUserWithToken = async (token: string) => {
         },
       ],
     },
-  });
-};
+  })
+}
 
-const VerifyUser = async (email: string) => {
-  return await db.user.update({
+async function VerifyUser(email: string) {
+  return db.user.update({
     data: {
       emailVerificationExpiry: null,
       emailVerificationToken: null,
       isEmailVerified: true,
     },
     where: {
-      email: email,
+      email,
     },
-  });
-};
+  })
+}
 
-const ResetPassword = async (email: string, resetToken: string) => {
+async function ResetPassword(email: string, resetToken: string) {
   return db.user.update({
     data: {
       forgotPasswordExpiry: new Date(Date.now() + 10 * 60 * 1000),
       forgotPasswordToken: resetToken,
     },
     where: {
-      email: email,
+      email,
     },
-  });
-};
+  })
+}
 
-const SetNewPassword = async (email: string, password: string) => {
+async function SetNewPassword(email: string, password: string) {
   try {
-    const hashedPassword = await HashPassword(password);
+    const hashedPassword = await HashPassword(password)
     return await db.user.update({
       data: {
         forgotPasswordExpiry: null,
@@ -95,17 +92,18 @@ const SetNewPassword = async (email: string, password: string) => {
         password: hashedPassword,
       },
       where: {
-        email: email,
+        email,
       },
-    });
-  } catch (error) {
-    Logger.error(error);
-    throw error;
+    })
   }
-};
+  catch (error) {
+    Logger.error(error)
+    throw error
+  }
+}
 
-const GetUser = async (id: string) => {
-  return await db.user.findUnique({
+async function GetUser(id: string) {
+  return db.user.findUnique({
     select: {
       createdAt: true,
       email: true,
@@ -119,10 +117,10 @@ const GetUser = async (id: string) => {
       username: true,
     },
     where: {
-      id: id,
+      id,
     },
-  });
-};
+  })
+}
 
 export {
   AddEmailVerificationToken,
@@ -133,4 +131,4 @@ export {
   ResetPassword,
   SetNewPassword,
   VerifyUser,
-};
+}

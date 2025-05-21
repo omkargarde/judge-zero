@@ -1,6 +1,5 @@
 interface IHttpError extends Error {
-  statusCode: null | number | undefined;
+  statusCode: null | number | undefined
 }
 
-export type { IHttpError };
-
+export type { IHttpError }
