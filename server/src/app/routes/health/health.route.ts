@@ -1,7 +1,12 @@
 import { Router } from 'express'
 
+import { RateLimiter } from '../../services/rate-limiter.service.ts'
 import { HealthCheck } from './health.controller.ts'
 
-const router = Router()
-router.get('/hc', HealthCheck)
-export { router as healthRouter }
+const healthRouter = Router()
+
+healthRouter.use(RateLimiter)
+
+healthRouter.get('/hc', HealthCheck)
+
+export { healthRouter }

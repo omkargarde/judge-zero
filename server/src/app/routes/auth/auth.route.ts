@@ -1,6 +1,6 @@
 import { Router } from 'express'
-import rateLimit from 'express-rate-limit'
 
+import { RateLimiter } from '../../services/rate-limiter.service.ts'
 import {
   forgotPassword,
   getMe,
@@ -14,15 +14,10 @@ import { isLoggedIn } from './auth.middleware.ts'
 
 const authRouter = Router()
 
-// Rate limiter: maximum of 5 requests per minute for verifyUser
-const verifyUserRateLimiter = rateLimit({
-  windowMs: 1 * 60 * 1000, // 1 minute
-  max: 5, // limit each IP to 5 requests per windowMs
-  message: 'Too many verification attempts from this IP, please try again later.',
-})
+authRouter.use(RateLimiter)
 
 authRouter.post('/register', registerUser)
-authRouter.post('/verify/:token', verifyUserRateLimiter, verifyUser)
+authRouter.post('/verify/:token', verifyUser)
 authRouter.post('/login', loginUser)
 authRouter.get('/me', isLoggedIn, getMe)
 authRouter.get('/logout', isLoggedIn, logoutUser)
