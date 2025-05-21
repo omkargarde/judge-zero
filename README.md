@@ -1,3 +1,7 @@
+## code style
+
+This project follows the [![code style](https://antfu.me/badge-code-style.svg)](https://github.com/antfu/eslint-config) for consistent and clean code formatting.
+
 ## Running PostgreSQL with Docker
 
 ```bash
