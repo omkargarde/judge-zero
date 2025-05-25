@@ -1,6 +1,12 @@
 import { Router } from 'express'
 
-import { RateLimiter } from '../../services/rate-limiter.service.ts'
+import {
+  loginRateLimiter,
+  registerRateLimiter,
+  verifyRateLimiter,
+  forgotPasswordRateLimiter,
+  resetPasswordRateLimiter,
+} from '../../services/rate-limiter.service.ts'
 import {
   forgotPassword,
   getMe,
@@ -14,14 +20,13 @@ import { isLoggedIn } from './auth.middleware.ts'
 
 const authRouter = Router()
 
-authRouter.use(RateLimiter)
-
-authRouter.post('/register', registerUser)
-authRouter.post('/verify/:token', verifyUser)
-authRouter.post('/login', loginUser)
-authRouter.get('/me', isLoggedIn, getMe)
-authRouter.get('/logout', isLoggedIn, logoutUser)
-authRouter.post('/forgot-password', forgotPassword)
-authRouter.post('/reset-password/:token', resetPassword)
+// Apply rate limiters per route
+authRouter.post('/register', registerRateLimiter, registerUser)
+authRouter.post('/verify/:token', verifyRateLimiter, verifyUser)
+authRouter.post('/login', loginRateLimiter, loginUser)
+authRouter.get('/me', isLoggedIn, getMe) // No rate limit for profile fetch
+authRouter.get('/logout', isLoggedIn, logoutUser) // No rate limit for logout
+authRouter.post('/forgot-password', forgotPasswordRateLimiter, forgotPassword)
+authRouter.post('/reset-password/:token', resetPasswordRateLimiter, resetPassword)
 
 export { authRouter }

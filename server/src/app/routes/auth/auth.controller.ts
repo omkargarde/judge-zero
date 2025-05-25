@@ -204,11 +204,11 @@ function logoutUser(req: Request, res: Response) {
 
 async function forgotPassword(req: Request, res: Response) {
   // get user by email and send reset token
-  const { email } = req.body as { email: string }
   const { success } = userForgotPasswordSchema.safeParse(req.body)
   if (!success) {
     throw new BadRequestException(AUTH_MESSAGES.EmailNotProvided)
   }
+  const { email } = req.body as { email: string }
 
   const user = await FindUser(email)
   if (!user) {
