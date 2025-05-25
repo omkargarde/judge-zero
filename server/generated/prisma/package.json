@@ -1,10 +1,11 @@
 {
-  "name": "prisma-client-606570bcd95767635a295cd76985c4d5d591c5e5ef4107bb6435b04ae2936c9b",
-  "version": "6.7.0",
-  "sideEffects": false,
+  "name": "prisma-client-b9a130db032920ff952fcf21acffba71fc68426a6b723224d20d7dd92cf1b3d7",
+  "main": "index.js",
+  "types": "index.d.ts",
+  "browser": "index-browser.js",
   "exports": {
     "./client": {
-      "import": {
+      "require": {
         "node": "./index.js",
         "edge-light": "./wasm.js",
         "workerd": "./wasm.js",
@@ -12,7 +13,7 @@
         "browser": "./index-browser.js",
         "default": "./index.js"
       },
-      "require": {
+      "import": {
         "node": "./index.js",
         "edge-light": "./wasm.js",
         "workerd": "./wasm.js",
@@ -24,7 +25,7 @@
     },
     "./package.json": "./package.json",
     ".": {
-      "import": {
+      "require": {
         "node": "./index.js",
         "edge-light": "./wasm.js",
         "workerd": "./wasm.js",
@@ -32,7 +33,7 @@
         "browser": "./index-browser.js",
         "default": "./index.js"
       },
-      "require": {
+      "import": {
         "node": "./index.js",
         "edge-light": "./wasm.js",
         "workerd": "./wasm.js",
@@ -44,97 +45,96 @@
     },
     "./edge": {
       "types": "./edge.d.ts",
-      "import": "./edge.js",
       "require": "./edge.js",
+      "import": "./edge.js",
       "default": "./edge.js"
     },
     "./react-native": {
       "types": "./react-native.d.ts",
-      "import": "./react-native.js",
       "require": "./react-native.js",
+      "import": "./react-native.js",
       "default": "./react-native.js"
     },
     "./extension": {
       "types": "./extension.d.ts",
-      "import": "./extension.js",
       "require": "./extension.js",
+      "import": "./extension.js",
       "default": "./extension.js"
     },
     "./index-browser": {
       "types": "./index.d.ts",
-      "import": "./index-browser.js",
       "require": "./index-browser.js",
+      "import": "./index-browser.js",
       "default": "./index-browser.js"
     },
     "./index": {
       "types": "./index.d.ts",
-      "import": "./index.js",
       "require": "./index.js",
+      "import": "./index.js",
       "default": "./index.js"
     },
     "./wasm": {
       "types": "./wasm.d.ts",
-      "import": "./wasm.mjs",
       "require": "./wasm.js",
+      "import": "./wasm.mjs",
       "default": "./wasm.mjs"
     },
     "./runtime/client": {
       "types": "./runtime/client.d.ts",
-      "import": "./runtime/client.mjs",
       "require": "./runtime/client.js",
+      "import": "./runtime/client.mjs",
       "default": "./runtime/client.mjs"
     },
     "./runtime/library": {
       "types": "./runtime/library.d.ts",
-      "import": "./runtime/library.mjs",
       "require": "./runtime/library.js",
+      "import": "./runtime/library.mjs",
       "default": "./runtime/library.mjs"
     },
     "./runtime/binary": {
       "types": "./runtime/binary.d.ts",
-      "import": "./runtime/binary.mjs",
       "require": "./runtime/binary.js",
+      "import": "./runtime/binary.mjs",
       "default": "./runtime/binary.mjs"
     },
     "./runtime/wasm": {
       "types": "./runtime/wasm.d.ts",
-      "import": "./runtime/wasm.mjs",
       "require": "./runtime/wasm.js",
+      "import": "./runtime/wasm.mjs",
       "default": "./runtime/wasm.mjs"
     },
     "./runtime/edge": {
       "types": "./runtime/edge.d.ts",
-      "import": "./runtime/edge-esm.js",
       "require": "./runtime/edge.js",
+      "import": "./runtime/edge-esm.js",
       "default": "./runtime/edge-esm.js"
     },
     "./runtime/react-native": {
       "types": "./runtime/react-native.d.ts",
-      "import": "./runtime/react-native.js",
       "require": "./runtime/react-native.js",
+      "import": "./runtime/react-native.js",
       "default": "./runtime/react-native.js"
     },
     "./generator-build": {
-      "import": "./generator-build/index.js",
       "require": "./generator-build/index.js",
+      "import": "./generator-build/index.js",
       "default": "./generator-build/index.js"
     },
     "./sql": {
-      "import": {
-        "types": "./sql.d.ts",
-        "node": "./sql.mjs",
-        "default": "./sql.mjs"
-      },
       "require": {
         "types": "./sql.d.ts",
         "node": "./sql.js",
         "default": "./sql.js"
       },
+      "import": {
+        "types": "./sql.d.ts",
+        "node": "./sql.mjs",
+        "default": "./sql.mjs"
+      },
       "default": "./sql.js"
     },
     "./*": "./*"
   },
-  "main": "index.js",
-  "types": "index.d.ts",
-  "browser": "index-browser.js"
+  "version": "6.8.2",
+  "sideEffects": false
 }
