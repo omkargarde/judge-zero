@@ -6,7 +6,7 @@ import {
 } from '../../constants/status.constant.ts'
 import { ApiResponse } from '../../utils/api-response.util.ts'
 
-function HealthCheck(req: Request, res: Response) {
+function HealthCheck(req: Request, res: Response): void {
   res
     .status(HTTP_STATUS_CODES.Ok)
     .json(

@@ -18,7 +18,7 @@ import {
 } from './auth.controller.ts'
 import { isLoggedIn } from './auth.middleware.ts'
 
-const authRouter = Router()
+const authRouter: Router = Router()
 
 // Apply rate limiters per route
 authRouter.post('/register', registerRateLimiter, registerUser)

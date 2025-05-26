@@ -9,7 +9,6 @@ import {
   HTTP_STATUS_CODES,
 } from '../../constants/status.constant.ts'
 import {
-  SendForgotPasswordTokenMail,
   SendVerificationTokenMail,
 } from '../../services/mail.service.ts'
 import {
@@ -44,7 +43,7 @@ import {
   userResetForgottenPasswordSchema,
 } from './auth.validator.ts'
 
-async function registerUser(req: Request, res: Response) {
+async function registerUser(req: Request, res: Response): Promise<void> {
   const { email, password, username } = req.body as { email: string, password: string, username: string }
   const { success } = userRegistrationSchema.safeParse(req.body)
   if (!success) {
@@ -104,7 +103,7 @@ async function registerUser(req: Request, res: Response) {
   }
 }
 
-async function verifyUser(req: Request, res: Response) {
+async function verifyUser(req: Request, res: Response): Promise<void> {
   // verify user
   const { token } = req.params
   const { success } = userEmailVerificationSchema.safeParse(req.params)
@@ -138,7 +137,7 @@ async function verifyUser(req: Request, res: Response) {
     )
 }
 
-async function loginUser(req: Request, res: Response) {
+async function loginUser(req: Request, res: Response): Promise<void> {
   Logger.info(req.body)
   const { success } = userLoginSchema.safeParse(req.body)
   if (!success) {
@@ -180,7 +179,7 @@ async function loginUser(req: Request, res: Response) {
     )
 }
 
-async function getMe(req: Request, res: Response) {
+async function getMe(req: Request, res: Response): Promise<void> {
   const user = await GetUser(req.id)
   if (!user) {
     throw new NotFoundException(AUTH_MESSAGES.UserNotFound)
@@ -191,7 +190,7 @@ async function getMe(req: Request, res: Response) {
     .json(new ApiResponse(HTTP_STATUS_CODES.Ok, user, AUTH_MESSAGES.UserFound))
 }
 
-function logoutUser(req: Request, res: Response) {
+function logoutUser(req: Request, res: Response): void {
   // Clear the token cookie
   const cookieOptions = FlushJwtCookieOptions()
   res.cookie(UserToken.token, '', cookieOptions)
@@ -202,7 +201,7 @@ function logoutUser(req: Request, res: Response) {
     )
 }
 
-async function forgotPassword(req: Request, res: Response) {
+async function forgotPassword(req: Request, res: Response): Promise<void> {
   // get user by email and send reset token
   const { success } = userForgotPasswordSchema.safeParse(req.body)
   if (!success) {
@@ -217,8 +216,6 @@ async function forgotPassword(req: Request, res: Response) {
   const resetToken = UnHashedToken()
   await ResetPassword(user.email, resetToken)
 
-  await SendForgotPasswordTokenMail(user.email, resetToken)
-
   res
     .status(HTTP_STATUS_CODES.Ok)
     .json(
@@ -226,7 +223,7 @@ async function forgotPassword(req: Request, res: Response) {
     )
 }
 
-async function resetPassword(req: Request, res: Response) {
+async function resetPassword(req: Request, res: Response): Promise<void> {
   // reset password
   const { token } = req.params
   if (token === null || token === undefined || token === '') {

@@ -14,7 +14,7 @@ function getTransporter() {
   })
 }
 
-async function SendVerificationTokenMail(token: string, email: string) {
+async function SendVerificationTokenMail(token: string, email: string): Promise<void> {
   const transporter = getTransporter()
 
   const mailOptions = {
@@ -33,7 +33,7 @@ async function SendVerificationTokenMail(token: string, email: string) {
   }
 }
 
-async function SendForgotPasswordTokenMail(resetToken: string, email: string) {
+async function SendForgotPasswordTokenMail(resetToken: string, email: string): Promise<void> {
   const transporter = getTransporter()
 
   const mailOptions = {

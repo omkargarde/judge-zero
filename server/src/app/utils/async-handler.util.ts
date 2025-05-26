@@ -1,4 +1,4 @@
-import type { NextFunction, Request, Response } from "express";
+import type { NextFunction, Request, Response } from 'express'
 
 /**
  * Wraps an asynchronous request handler function and ensures that any errors
@@ -12,12 +12,13 @@ import type { NextFunction, Request, Response } from "express";
  * errors and passing them to the next middleware.
  */
 export function asyncHandler(
-  requestHandler: (req: Request, res: Response) => Promise<Response | undefined>
+  requestHandler: (req: Request, res: Response) => Promise<Response | undefined>,
 ) {
   return function (req: Request, res: Response, next: NextFunction) {
     Promise.resolve(requestHandler(req, res)).catch((err: unknown) => {
-      if (err instanceof Error) next(err);
-      else next(err);
-    });
-  };
+      if (err instanceof Error)
+        next(err)
+      else next(err)
+    })
+  }
 }
