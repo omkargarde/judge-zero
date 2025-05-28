@@ -1,13 +1,3 @@
-const userRolesEnum = {
-  Admin: 'admin',
-  Member: 'member',
-  ProjectAdmin: 'project_admin',
-} as const
-
-const UserToken = { AccessToken: 'AccessToken', token: 'token' } as const
-
-const AvailableUserRoles = Object.values(userRolesEnum)
-
 const AUTH_MESSAGES = {
   BadEmailToken: 'Verification token does not exist or is expired',
   BadToken: 'Token is invalid',
@@ -30,4 +20,4 @@ const AUTH_MESSAGES = {
   VerifiedUserEmail: 'User email verified',
 } as const
 
-export { AUTH_MESSAGES, AvailableUserRoles, userRolesEnum, UserToken }
+export { AUTH_MESSAGES }

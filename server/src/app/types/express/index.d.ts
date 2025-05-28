@@ -1,4 +1,5 @@
 import type { JwtPayload } from 'jsonwebtoken'
+import type { User } from '../../../../generated/prisma/index.js'
 
 /**
  * Global augmentation of Express Request interface

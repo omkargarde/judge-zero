@@ -1,5 +1,8 @@
 import type { NextFunction, Request, Response } from 'express'
 
+import type { User } from '../../../../generated/prisma/index.js'
+import { UserRole } from '../../../../generated/prisma/index.js'
+import { db } from '../../../libs/db.ts'
 import { Logger } from '../../../logger.ts'
 import { HTTP_ERROR_MESSAGES } from '../../constants/status.constant.ts'
 import { VerifyToken } from '../../services/token.service.ts'
@@ -10,7 +13,7 @@ import {
 } from '../../utils/error.util.ts'
 import { AUTH_MESSAGES } from './auth.constant.ts'
 
-function isLoggedIn(req: Request, res: Response, next: NextFunction) {
+function isLoggedIn(req: Request, res: Response, next: NextFunction): void {
   try {
     Logger.info('=== Auth Middleware Debug ===')
     Logger.info('Cookies:', req.cookies)
@@ -53,4 +56,37 @@ function isLoggedIn(req: Request, res: Response, next: NextFunction) {
   }
 }
 
-export { isLoggedIn }
+async function isAdmin(req: Request, res: Response, next: NextFunction): Promise<void> {
+  try {
+    const userDataFromSession = req.user as User
+    const userDataFromDb = await db.user.findUnique({
+      where: {
+
+        id: userDataFromSession.id,
+      },
+      select: {
+        role: true,
+      },
+    })
+
+    if (!userDataFromDb) {
+      Logger.error('user not found while checking for admin role')
+      throw new NotFoundException(HTTP_ERROR_MESSAGES.NotFound)
+    }
+    if (userDataFromDb.role !== UserRole.ADMIN) {
+      Logger.error('user is not admin')
+      throw new UnauthorizedException(`${HTTP_ERROR_MESSAGES.Unauthorized}--only admins can access the route`)
+    }
+
+    next()
+  }
+  catch (error) {
+    Logger.error('uncaught error while checking user role')
+    throw new InternalServerErrorException(
+      HTTP_ERROR_MESSAGES.InternalServerError,
+      error,
+    )
+  }
+}
+
+export { isAdmin, isLoggedIn }
