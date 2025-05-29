@@ -44,11 +44,11 @@ import {
 } from './auth.validator.ts'
 
 async function registerUser(req: Request, res: Response): Promise<void> {
-  const { email, password, username } = req.body as { email: string, password: string, username: string }
-  const { success } = userRegistrationSchema.safeParse(req.body)
-  if (!success) {
+  const result = userRegistrationSchema.safeParse(req.body)
+  if (!result.success) {
     throw new InternalServerErrorException()
   }
+  const { email, password, username } = result.data
   try {
     Logger.info('Find if user already exists')
     const existingUser = await FindUser(email)
@@ -106,9 +106,9 @@ async function registerUser(req: Request, res: Response): Promise<void> {
 async function verifyUser(req: Request, res: Response): Promise<void> {
   // verify user
   const { token } = req.params
-  const { success } = userEmailVerificationSchema.safeParse(req.params)
+  const result = userEmailVerificationSchema.safeParse(req.params)
   if (
-    !success
+    !result.success
     || token === null
     || token === undefined
     || token === ''
@@ -138,12 +138,11 @@ async function verifyUser(req: Request, res: Response): Promise<void> {
 }
 
 async function loginUser(req: Request, res: Response): Promise<void> {
-  Logger.info(req.body)
-  const { success } = userLoginSchema.safeParse(req.body)
-  if (!success) {
+  const result = userLoginSchema.safeParse(req.body)
+  if (!result.success) {
     throw new InternalServerErrorException()
   }
-  const { email, password } = req.body as { email: string, password: string }
+  const { email, password } = result.data
 
   const user = await FindUser(email)
   if (!user) {
@@ -203,11 +202,11 @@ function logoutUser(req: Request, res: Response): void {
 
 async function forgotPassword(req: Request, res: Response): Promise<void> {
   // get user by email and send reset token
-  const { success } = userForgotPasswordSchema.safeParse(req.body)
-  if (!success) {
+  const result = userForgotPasswordSchema.safeParse(req.body)
+  if (!result.success) {
     throw new BadRequestException(AUTH_MESSAGES.EmailNotProvided)
   }
-  const { email } = req.body as { email: string }
+  const { email } = result.data
 
   const user = await FindUser(email)
   if (!user) {
@@ -229,16 +228,16 @@ async function resetPassword(req: Request, res: Response): Promise<void> {
   if (token === null || token === undefined || token === '') {
     throw new BadRequestException(AUTH_MESSAGES.BadToken)
   }
-  const { password } = req.body as { password: string }
-  const { success } = userResetForgottenPasswordSchema.safeParse(req.params)
-  if (!success) {
+  const result = userResetForgottenPasswordSchema.safeParse(req.params)
+  if (!result.success) {
     throw new InternalServerErrorException()
   }
+  const { newPassword } = result.data
   const user = await FindUserWithToken(token)
   if (!user) {
     throw new NotFoundException(AUTH_MESSAGES.UserNotFound)
   }
-  await SetNewPassword(user.email, password)
+  await SetNewPassword(user.email, newPassword)
   res
     .status(HTTP_STATUS_CODES.Ok)
     .json(

@@ -17,8 +17,8 @@ function updateProblemById(req: Request, res: Response) {
 function deleteProblemById(req: Request, res: Response) {
 
 }
-function getAllSolvedProblems(req: Request, res: Response) {
+function getAllSolvedProblemsByUser(req: Request, res: Response) {
 
 }
 
-export { createProblem, deleteProblemById, getAllProblemById, getAllProblems, getAllSolvedProblems, updateProblemById }
+export { createProblem, deleteProblemById, getAllProblemById, getAllProblems, getAllSolvedProblemsByUser, updateProblemById }

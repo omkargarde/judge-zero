@@ -19,5 +19,6 @@ const AUTH_MESSAGES = {
   UserNotFound: 'User not found',
   VerifiedUserEmail: 'User email verified',
 } as const
+const UserToken = { AccessToken: 'AccessToken', token: 'token' } as const
 
-export { AUTH_MESSAGES }
+export { AUTH_MESSAGES, UserToken }
