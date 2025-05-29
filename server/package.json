@@ -14,12 +14,12 @@
     "dev": "node --watch --env-file=.env --experimental-strip-types src/index.ts",
     "lint": "eslint .",
     "lint:fix": "eslint --fix .",
-    "p:format": "prisma format",
-    "p:validate": "prisma validate",
-    "p:generate": "prisma generate",
-    "p:dev": "prisma migrate dev",
-    "p:push": "prisma db push",
-    "p:studio": "pnpm dlx prisma studio"
+    "db:format": "prisma format",
+    "db:validate": "prisma validate",
+    "db:generate": "prisma generate",
+    "db:dev": "prisma migrate dev",
+    "db:push": "prisma db push",
+    "db:studio": "pnpm dlx prisma studio"
   },
   "dependencies": {
     "@prisma/client": "^6.8.2",
