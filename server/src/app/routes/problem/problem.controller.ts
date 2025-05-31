@@ -1,4 +1,10 @@
+import { z } from "zod"
+
 function createProblem(req: Request, res: Response) {
+  // get all data from req body
+  // check user role again
+  // loop through each reference solution for different languages
+  const result = z.
 
 }
 
