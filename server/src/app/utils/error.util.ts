@@ -1,6 +1,7 @@
 import {
   HTTP_ERROR_MESSAGES,
   HTTP_STATUS_CODES,
+  HTTP_STATUS_MESSAGES,
 } from '../constants/status.constant.ts'
 
 class ApiError extends Error {
@@ -62,8 +63,8 @@ class NotFoundException extends ApiError {
 }
 
 class UnauthorizedException extends ApiError {
-  constructor(message: string = HTTP_ERROR_MESSAGES.NotFound, error?: unknown) {
-    super(HTTP_STATUS_CODES.NotFound, message, [error])
+  constructor(message: string = HTTP_STATUS_MESSAGES.Unauthorized, error?: unknown) {
+    super(HTTP_STATUS_CODES.Unauthorized, message, [error])
   }
 }
 class UnprocessableEntityException extends ApiError {

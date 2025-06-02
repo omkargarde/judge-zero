@@ -13,7 +13,7 @@ import {
 } from '../../utils/error.util.ts'
 import { AUTH_MESSAGES } from './auth.constant.ts'
 
-function isLoggedIn(req: Request, res: Response, next: NextFunction): void {
+function isLoggedIn(req: Request, res: Response, next: NextFunction) {
   try {
     Logger.info('=== Auth Middleware Debug ===')
     Logger.info('Cookies:', req.cookies)
@@ -56,7 +56,7 @@ function isLoggedIn(req: Request, res: Response, next: NextFunction): void {
   }
 }
 
-async function isAdmin(req: Request, res: Response, next: NextFunction): Promise<void> {
+async function isAdmin(req: Request, res: Response, next: NextFunction) {
   try {
     const userDataFromSession = req.user as User
     const userDataFromDb = await db.user.findUnique({
