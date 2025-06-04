@@ -2,7 +2,6 @@
 import type { CookieOptions, Request, Response } from 'express'
 
 import bcrypt from 'bcryptjs'
-
 import { Logger } from '../../../logger.ts'
 import {
   HTTP_ERROR_MESSAGES,
@@ -228,7 +227,7 @@ async function resetPassword(req: Request, res: Response) {
   if (token === null || token === undefined || token === '') {
     throw new BadRequestException(AUTH_MESSAGES.BadToken)
   }
-  const result = userResetForgottenPasswordSchema.safeParse(req.params)
+  const result = userResetForgottenPasswordSchema.safeParse(req.body)
   if (!result.success) {
     throw new InternalServerErrorException()
   }

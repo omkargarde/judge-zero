@@ -55,10 +55,10 @@ class InternalServerErrorException extends ApiError {
 }
 class NotFoundException extends ApiError {
   constructor(
-    message: string = HTTP_ERROR_MESSAGES.Unauthorized,
+    message: string = HTTP_ERROR_MESSAGES.NotFound,
     error?: unknown,
   ) {
-    super(HTTP_STATUS_CODES.Unauthorized, message, [error])
+    super(HTTP_STATUS_CODES.NotFound, message, [error])
   }
 }
 
