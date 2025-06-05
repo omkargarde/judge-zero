@@ -43,7 +43,7 @@ import {
 } from './auth.validator.ts'
 
 async function registerUser(req: Request, res: Response) {
-  const result = userRegistrationSchema.safeParse(req.body)
+  const result = userLoginSchema.safeParse(req.body)
   if (result.error) {
     throw new BadRequestException(JSON.stringify(result.error.flatten()))
   }
@@ -137,10 +137,10 @@ async function verifyUser(req: Request, res: Response) {
 }
 
 async function loginUser(req: Request, res: Response) {
-const result = userRegistrationSchema.safeParse(req.body)
-if (!result.success) {
-  throw new BadRequestException(JSON.stringify(result.error.flatten()))
-}
+  const result = userRegistrationSchema.safeParse(req.body)
+  if (!result.success) {
+    throw new BadRequestException(JSON.stringify(result.error.flatten()))
+  }
   const { email, password } = result.data
 
   const user = await FindUser(email)
@@ -229,7 +229,7 @@ async function resetPassword(req: Request, res: Response) {
   }
   const result = userResetForgottenPasswordSchema.safeParse(req.body)
   if (!result.success) {
-    throw new InternalServerErrorException()
+    throw new BadRequestException(JSON.stringify(result.error.flatten()))
   }
   const { newPassword } = result.data
   const user = await FindUserWithToken(token)

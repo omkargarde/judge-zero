@@ -58,6 +58,9 @@ function isLoggedIn(req: Request, res: Response, next: NextFunction) {
 
 async function isAdmin(req: Request, res: Response, next: NextFunction) {
   try {
+    if (req.user === undefined || req.user === null) {
+      throw new UnauthorizedException('User not authenticated')
+    }
     const userDataFromSession = req.user as User
     const userDataFromDb = await db.user.findUnique({
       where: {
@@ -81,6 +84,10 @@ async function isAdmin(req: Request, res: Response, next: NextFunction) {
     next()
   }
   catch (error) {
+    // Re-throw custom exceptions
+    if (error instanceof NotFoundException || error instanceof UnauthorizedException) {
+      throw error
+    }
     Logger.error('uncaught error while checking user role')
     throw new InternalServerErrorException(
       HTTP_ERROR_MESSAGES.InternalServerError,
