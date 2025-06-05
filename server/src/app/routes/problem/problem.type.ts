@@ -8,7 +8,7 @@ interface ISubmissionResults {
   language_id: number
   stdout: string
   status_id: number
-  stderr: null
+  stderr: string | null
   token: string
 }
 

@@ -44,8 +44,8 @@ import {
 
 async function registerUser(req: Request, res: Response) {
   const result = userRegistrationSchema.safeParse(req.body)
-  if (!result.success) {
-    throw new InternalServerErrorException()
+  if (result.error) {
+    throw new BadRequestException(JSON.stringify(result.error.flatten()))
   }
   const { email, password, username } = result.data
   try {
@@ -137,10 +137,10 @@ async function verifyUser(req: Request, res: Response) {
 }
 
 async function loginUser(req: Request, res: Response) {
-  const result = userLoginSchema.safeParse(req.body)
-  if (!result.success) {
-    throw new InternalServerErrorException()
-  }
+const result = userRegistrationSchema.safeParse(req.body)
+if (!result.success) {
+  throw new BadRequestException(JSON.stringify(result.error.flatten()))
+}
   const { email, password } = result.data
 
   const user = await FindUser(email)

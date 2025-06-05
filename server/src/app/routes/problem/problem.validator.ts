@@ -7,9 +7,13 @@ const CreateProblemSchema = z.object({
   tags: z.array(z.string({ required_error: 'tags is required' })),
   example: z.string({ required_error: 'example is required' }),
   constraints: z.string({ required_error: 'constraints is required' }),
-  testCases:z.array(z.object({
-    input:z.string(),output:z.string()
-  }),{required_error:"test case is required"}),
+  testCases: z.array(
+    z.object({
+      input: z.string().min(1, 'Test case input cannot be empty'),
+      output: z.string().min(1, 'Test case output cannot be empty'),
+    }),
+    { required_error: 'Test cases are required' },
+  ).min(1, 'At least one test case is required'),
   codeSnippets: z.string({ required_error: 'code snippets is required' }),
   referenceSolution: z.string({ required_error: 'reference solution is required' }),
 
