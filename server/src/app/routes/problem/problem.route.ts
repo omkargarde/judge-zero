@@ -6,9 +6,9 @@ const problemRouter: Router = Router()
 
 problemRouter.post('/create-problem', isLoggedIn, isAdmin, createProblem)
 problemRouter.get('/get-all-problems', isLoggedIn, getAllProblems)
-problemRouter.get('get-problem/:id', isLoggedIn, getAllProblemById)
-problemRouter.put('update-problem/:id', isLoggedIn, isAdmin, updateProblemById)
-problemRouter.delete('delete-problem/:id', isLoggedIn, isAdmin, deleteProblemById)
+problemRouter.get('/get-problem/:id', isLoggedIn, getAllProblemById)
+problemRouter.put('/update-problem/:id', isLoggedIn, isAdmin, updateProblemById)
+problemRouter.delete('/delete-problem/:id', isLoggedIn, isAdmin, deleteProblemById)
 problemRouter.get('/get-solved-problems', isLoggedIn, getAllSolvedProblemsByUser)
 
 export { problemRouter }
