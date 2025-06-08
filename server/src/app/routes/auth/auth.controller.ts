@@ -43,7 +43,7 @@ import {
 } from './auth.validator.ts'
 
 async function registerUser(req: Request, res: Response) {
-  const result = userLoginSchema.safeParse(req.body)
+  const result = userRegistrationSchema.safeParse(req.body)
   if (result.error) {
     throw new BadRequestException(JSON.stringify(result.error.flatten()))
   }
@@ -137,7 +137,7 @@ async function verifyUser(req: Request, res: Response) {
 }
 
 async function loginUser(req: Request, res: Response) {
-  const result = userRegistrationSchema.safeParse(req.body)
+  const result = userLoginSchema.safeParse(req.body)
   if (!result.success) {
     throw new BadRequestException(JSON.stringify(result.error.flatten()))
   }
