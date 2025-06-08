@@ -26,7 +26,6 @@ async function createProblem(req: Request, res: Response, next: NextFunction) {
   if (req.user?.role !== UserRole.ADMIN) {
     throw new UnauthorizedException(HTTP_STATUS_MESSAGES.Unauthorized)
   }
-  let newProblem
   // loop through each reference solution for different languages
   try {
     for (const [language, solutionCode] of Object.entries(tReq.referenceSolution)) {
@@ -68,21 +67,21 @@ async function createProblem(req: Request, res: Response, next: NextFunction) {
         Logger.error('user id not found')
         throw new InternalServerErrorException(AUTH_MESSAGES.UserNotFound)
       }
-      newProblem = await db.problem.create({
-        data: {
-          title: tReq.title,
-          description: tReq.description,
-          difficulty: tReq.difficulty as Difficulty,
-          tags: tReq.tags,
-          constraints: tReq.constraints,
-          codeSnippets: tReq.codeSnippets,
-          referenceSolution: tReq.referenceSolution,
-          examples: tReq.examples, // rename to match Prisma schema
-          testcases: tReq.testcases, // rename to match Prisma schema
-          userId: req.user.id, // use nested relation
-        },
-      })
     }
+    const newProblem = await db.problem.create({
+      data: {
+        title: tReq.title,
+        description: tReq.description,
+        difficulty: tReq.difficulty as Difficulty,
+        tags: tReq.tags,
+        constraints: tReq.constraints,
+        codeSnippets: tReq.codeSnippets,
+        referenceSolution: tReq.referenceSolution,
+        examples: tReq.examples, // rename to match Prisma schema
+        testcases: tReq.testcases, // rename to match Prisma schema
+        userId: req.user.id, // use nested relation
+      },
+    })
     return res
       .status(HTTP_STATUS_CODES.Created)
       .json(
