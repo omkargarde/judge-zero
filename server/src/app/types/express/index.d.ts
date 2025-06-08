@@ -9,11 +9,10 @@ declare global {
   namespace Express {
     interface Request {
       id: string
-      user?: (
-        | { id: string, role: UserRole }
-        | (JwtPayload & { id?: string, role?: UserRole })
-        | undefined
-      )
+      user?: {
+        id: string
+        role: UserRole
+      } & Partial<JwtPayload>
     }
   }
 }

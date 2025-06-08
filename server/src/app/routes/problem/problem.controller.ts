@@ -45,14 +45,16 @@ async function createProblem(req: Request, res: Response, next: NextFunction) {
         })
 
       const batchTokens = await submitBatch(submissions)
-      const submissionTokens = batchTokens.map(batchToken => batchToken.token)
+      const submissionTokens = batchTokens.map(
+        batchToken => batchToken.token,
+      )
       const results = await pollBatchResults(submissionTokens)
 
       for (let i = 0; i < results.length; i++) {
         const result = results[i]
-
         if (result?.status_id !== 3) {
-          return res.status(HTTP_STATUS_CODES.BadRequest)
+          return res
+            .status(HTTP_STATUS_CODES.BadRequest)
             .json(
               new ApiResponse(
                 HTTP_STATUS_CODES.BadRequest,
@@ -82,10 +84,10 @@ async function createProblem(req: Request, res: Response, next: NextFunction) {
       })
     }
     return res
-      .status(HTTP_STATUS_CODES.Ok)
+      .status(HTTP_STATUS_CODES.Created)
       .json(
         new ApiResponse(
-          HTTP_STATUS_CODES.Ok,
+          HTTP_STATUS_CODES.Created,
           newProblem,
           PROBLEM_MESSAGES.ProblemCreatedSuccessfully,
         ),
