@@ -5,9 +5,9 @@ const CreateProblemSchema = z.object({
   description: z.string({ required_error: 'description is required' }),
   difficulty: z.string({ required_error: 'difficulty is required' }),
   tags: z.array(z.string({ required_error: 'tags is required' })),
-  example: z.string({ required_error: 'example is required' }),
+  examples: z.string({ required_error: 'example is required' }),
   constraints: z.string({ required_error: 'constraints is required' }),
-  testCases: z.array(
+  testcases: z.array(
     z.object({
       input: z.string().min(1, 'Test case input cannot be empty'),
       output: z.string().min(1, 'Test case output cannot be empty'),

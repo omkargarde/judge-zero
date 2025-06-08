@@ -64,7 +64,6 @@ async function isAdmin(req: Request, res: Response, next: NextFunction) {
     const userDataFromSession = req.user as User
     const userDataFromDb = await db.user.findUnique({
       where: {
-
         id: userDataFromSession.id,
       },
       select: {
