@@ -52,7 +52,7 @@ async function createProblem(req: Request, res: Response, next: NextFunction) {
       for (let i = 0; i < results.length; i++) {
         const result = results[i]
         if (result?.status_id !== 3) {
-          return res
+          res
             .status(HTTP_STATUS_CODES.BadRequest)
             .json(
               new ApiResponse(
@@ -62,11 +62,11 @@ async function createProblem(req: Request, res: Response, next: NextFunction) {
             )
         }
       }
-      // save the problem to the database
-      if (req.user.id == null) {
-        Logger.error('user id not found')
-        throw new InternalServerErrorException(AUTH_MESSAGES.UserNotFound)
-      }
+    }
+    // save the problem to the database
+    if (req.user.id == null) {
+      Logger.error('user id not found')
+      throw new InternalServerErrorException(AUTH_MESSAGES.UserNotFound)
     }
     const newProblem = await db.problem.create({
       data: {
@@ -82,7 +82,7 @@ async function createProblem(req: Request, res: Response, next: NextFunction) {
         userId: req.user.id, // use nested relation
       },
     })
-    return res
+    res
       .status(HTTP_STATUS_CODES.Created)
       .json(
         new ApiResponse(
@@ -99,9 +99,6 @@ async function createProblem(req: Request, res: Response, next: NextFunction) {
       next(error)
     }
     Logger.error('unhandled error')
-    if (error instanceof Error) {
-      throw new TypeError(error.message, error)
-    }
     throw new InternalServerErrorException()
   }
 }
