@@ -44,7 +44,7 @@ import {
 
 async function registerUser(req: Request, res: Response) {
   const result = userRegistrationSchema.safeParse(req.body)
-  if (result.error) {
+  if (!result.success) {
     throw new BadRequestException(JSON.stringify(result.error.flatten()))
   }
   const { email, password, username } = result.data
