@@ -9,7 +9,7 @@ import { HTTP_STATUS_CODES, HTTP_STATUS_MESSAGES } from '../../constants/status.
 import { ApiResponse } from '../../utils/api-response.util.ts'
 import { BadRequestException, InternalServerErrorException, UnauthorizedException } from '../../utils/error.util.ts'
 import { AUTH_MESSAGES } from '../auth/auth.constant.ts'
-import { PROBLEM_MESSAGES } from './problem.constant.ts'
+import { JUDGE0_STATUS, PROBLEM_MESSAGES } from './problem.constant.ts'
 import { GetJudge0LanguageId, pollBatchResults, submitBatch } from './problem.service.ts'
 import { CreateProblemSchema } from './problem.validator.ts'
 
@@ -51,15 +51,11 @@ async function createProblem(req: Request, res: Response, next: NextFunction) {
 
       for (let i = 0; i < results.length; i++) {
         const result = results[i]
-        if (result?.status_id !== 3) {
-          res
-            .status(HTTP_STATUS_CODES.BadRequest)
-            .json(
-              new ApiResponse(
-                HTTP_STATUS_CODES.BadRequest,
-                { error: `Testcase ${i + 1} failed for language ${language}` },
-              ),
-            )
+        if (result === undefined) {
+          throw new BadRequestException(`error: Testcase ${i + 1} failed for language ${language}`)
+        }
+        if (result.status_id !== JUDGE0_STATUS.Accepted) {
+          throw new BadRequestException(`error: Testcase ${i + 1} failed for language ${language}`)
         }
       }
     }
@@ -77,9 +73,9 @@ async function createProblem(req: Request, res: Response, next: NextFunction) {
         constraints: tReq.constraints,
         codeSnippets: tReq.codeSnippets,
         referenceSolution: tReq.referenceSolution,
-        examples: tReq.examples, // rename to match Prisma schema
-        testcases: tReq.testcases, // rename to match Prisma schema
-        userId: req.user.id, // use nested relation
+        examples: tReq.examples,
+        testcases: tReq.testcases,
+        userId: req.user.id,
       },
     })
     res
@@ -104,22 +100,23 @@ async function createProblem(req: Request, res: Response, next: NextFunction) {
 }
 
 function getAllProblems(req: Request, res: Response) {
-
+  res.status(501).json({ message: 'Not implemented' })
 }
 
 function getAllProblemById(req: Request, res: Response) {
-
+  res.status(501).json({ message: 'Not implemented' })
 }
 
 function updateProblemById(req: Request, res: Response) {
-
+  res.status(501).json({ message: 'Not implemented' })
 }
 
 function deleteProblemById(req: Request, res: Response) {
-
+  res.status(501).json({ message: 'Not implemented' })
 }
-function getAllSolvedProblemsByUser(req: Request, res: Response) {
 
+function getAllSolvedProblemsByUser(req: Request, res: Response) {
+  res.status(501).json({ message: 'Not implemented' })
 }
 
 export { createProblem, deleteProblemById, getAllProblemById, getAllProblems, getAllSolvedProblemsByUser, updateProblemById }

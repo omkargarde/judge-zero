@@ -25,6 +25,6 @@ app.use(
 // Route Handlers
 app.use('/', healthCheckRouter)
 app.use('/v1/api/auth', authRouter)
-app.use('/v1/api/problems', problemRouter)
+app.use('/v1/api/problem', problemRouter)
 
 export { app }

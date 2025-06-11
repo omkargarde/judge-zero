@@ -3,4 +3,10 @@ const PROBLEM_MESSAGES = {
   ProblemCreatedSuccessfully: 'problem was created successfully',
 } as const
 
-export { PROBLEM_MESSAGES }
+const JUDGE0_STATUS = {
+  InQueue: 1,
+  Processing: 2,
+  Accepted: 3,
+}
+
+export { JUDGE0_STATUS, PROBLEM_MESSAGES }

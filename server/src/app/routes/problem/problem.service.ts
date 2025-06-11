@@ -3,6 +3,7 @@ import axios from 'axios'
 import { Env } from '../../../env.ts'
 import { Logger } from '../../../logger.ts'
 import { PromisedSleep } from '../../utils/sleep.util.ts'
+import { JUDGE0_STATUS } from './problem.constant.ts'
 
 function GetJudge0LanguageId(language: string) {
   const languageMap: Record<string, number> = {
@@ -31,7 +32,10 @@ async function pollBatchResults(tokens: string[]) {
     })
     const results = data.submissions
     const isAllDone = results
-      .every(result => result.status_id !== 1 && result.status_id !== 2)
+      .every(
+        result =>
+          result.status_id !== JUDGE0_STATUS.InQueue && result.status_id !== JUDGE0_STATUS.Processing,
+      )
     if (isAllDone) {
       return results
     }
