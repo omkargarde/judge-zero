@@ -40,9 +40,10 @@ function isLoggedIn(req: Request, res: Response, next: NextFunction) {
       // Verify token
       const decoded = VerifyToken(token)
       Logger.info('Token verified successfully')
-
-      req.user = decoded
-      next()
+      if (typeof decoded === 'object' && decoded !== null) {
+        req.user = decoded
+        next()
+      }
     }
     catch (error) {
       throw new UnauthorizedException(AUTH_MESSAGES.BadToken, error)
