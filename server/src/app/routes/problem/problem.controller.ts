@@ -50,12 +50,13 @@ async function createProblem(req: Request, res: Response, next: NextFunction) {
       const results = await pollBatchResults(submissionTokens)
 
       for (let i = 0; i < results.length; i++) {
+        Logger.info('results:: ', results[i])
         const result = results[i]
         if (result === undefined) {
-          throw new BadRequestException(`error: Testcase ${i + 1} failed for language ${language}`)
+          throw new BadRequestException(`Testcase ${i + 1} failed for language ${language}`)
         }
         if (result.status_id !== JUDGE0_STATUS.Accepted) {
-          throw new BadRequestException(`error: Testcase ${i + 1} failed for language ${language}`)
+          throw new BadRequestException(`Testcase ${i + 1} failed for language ${language}`)
         }
       }
     }
