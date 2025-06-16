@@ -1,6 +1,7 @@
 // user controllers
-import type { CookieOptions, Request, Response } from 'express'
+import type { CookieOptions, NextFunction, Request, Response } from 'express'
 
+import { error } from 'node:console'
 import bcrypt from 'bcryptjs'
 import { Logger } from '../../../logger.ts'
 import {
@@ -42,14 +43,14 @@ import {
   userResetForgottenPasswordSchema,
 } from './auth.validator.ts'
 
-async function registerUser(req: Request, res: Response) {
+async function registerUser(req: Request, res: Response, next: NextFunction) {
   const result = userRegistrationSchema.safeParse(req.body)
   if (!result.success) {
     throw new BadRequestException(JSON.stringify(result.error.flatten()))
   }
   const { email, password, username } = result.data
   try {
-    Logger.info('Find if user already exists')
+    Logger.info('Finding if user already exists')
     const existingUser = await FindUser(email)
     if (existingUser) {
       throw new ConflictException(AUTH_MESSAGES.UserConflict)
@@ -79,9 +80,7 @@ async function registerUser(req: Request, res: Response) {
     }
     catch (mailError) {
       Logger.error('Failed to send verification email', mailError)
-      throw new InternalServerErrorException(
-        'Failed to send verification email',
-      )
+      next(mailError)
     }
 
     res
@@ -95,10 +94,7 @@ async function registerUser(req: Request, res: Response) {
       )
   }
   catch (error) {
-    throw new InternalServerErrorException(
-      HTTP_ERROR_MESSAGES.InternalServerError,
-      error,
-    )
+    next(error)
   }
 }
 
