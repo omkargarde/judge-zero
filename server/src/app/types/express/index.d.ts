@@ -1,4 +1,5 @@
 import type { JwtPayload } from 'jsonwebtoken'
+import type { UserRole } from '../../../../generated/prisma/index.js'
 
 /**
  * Global augmentation of Express Request interface
@@ -8,7 +9,11 @@ declare global {
   namespace Express {
     interface Request {
       id: string
-      user?: JwtPayload | string
+      user?: (
+        | { id: string, role: UserRole }
+        | (JwtPayload & { id?: string, role?: UserRole })
+        | undefined
+      )
     }
   }
 }

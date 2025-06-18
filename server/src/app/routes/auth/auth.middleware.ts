@@ -1,5 +1,8 @@
 import type { NextFunction, Request, Response } from 'express'
 
+import type { User } from '../../../../generated/prisma/index.js'
+import { UserRole } from '../../../../generated/prisma/index.js'
+import { db } from '../../../libs/db.ts'
 import { Logger } from '../../../logger.ts'
 import { HTTP_ERROR_MESSAGES } from '../../constants/status.constant.ts'
 import { VerifyToken } from '../../services/token.service.ts'
@@ -37,9 +40,10 @@ function isLoggedIn(req: Request, res: Response, next: NextFunction) {
       // Verify token
       const decoded = VerifyToken(token)
       Logger.info('Token verified successfully')
-
-      req.user = decoded
-      next()
+      if (typeof decoded === 'object' && decoded !== null) {
+        req.user = decoded
+        next()
+      }
     }
     catch (error) {
       throw new UnauthorizedException(AUTH_MESSAGES.BadToken, error)
@@ -53,4 +57,43 @@ function isLoggedIn(req: Request, res: Response, next: NextFunction) {
   }
 }
 
-export { isLoggedIn }
+async function isAdmin(req: Request, res: Response, next: NextFunction) {
+  try {
+    if (req.user === undefined || req.user === null) {
+      throw new UnauthorizedException('User not authenticated')
+    }
+    const userDataFromSession = req.user as User
+    const userDataFromDb = await db.user.findUnique({
+      where: {
+        id: userDataFromSession.id,
+      },
+      select: {
+        role: true,
+      },
+    })
+
+    if (!userDataFromDb) {
+      Logger.error('user not found while checking for admin role')
+      throw new NotFoundException(HTTP_ERROR_MESSAGES.NotFound)
+    }
+    if (userDataFromDb.role !== UserRole.ADMIN) {
+      Logger.error('user is not admin')
+      throw new UnauthorizedException(`${HTTP_ERROR_MESSAGES.Unauthorized}--only admins can access the route`)
+    }
+
+    next()
+  }
+  catch (error) {
+    // Re-throw custom exceptions
+    if (error instanceof NotFoundException || error instanceof UnauthorizedException) {
+      throw error
+    }
+    Logger.error('uncaught error while checking user role')
+    throw new InternalServerErrorException(
+      HTTP_ERROR_MESSAGES.InternalServerError,
+      error,
+    )
+  }
+}
+
+export { isAdmin, isLoggedIn }

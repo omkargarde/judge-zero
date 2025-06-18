@@ -1,3 +1,0 @@
-{"errors":[null],"level":"error","message":"User registration failed: User already exists","service":"user-service","stack":"Error: User already exists\n    at registerUser (file:///C:/Users/garde/Downloads/project/cohort/judge-zero/server/src/app/routes/auth/auth.controller.ts:61:13)","statusCode":409,"success":false}
-{"level":"error","message":"Missing email verification token or email","service":"user-service"}
-{"errors":[null],"level":"error","message":"User registration failed: Missing token or email","service":"user-service","stack":"Error: Missing token or email\n    at registerUser (file:///C:/Users/garde/Downloads/project/cohort/judge-zero/server/src/app/routes/auth/auth.controller.ts:72:13)","statusCode":500,"success":false}

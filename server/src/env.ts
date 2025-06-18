@@ -17,12 +17,14 @@ const envSchema = z.object({
   NODE_ENV: z.string(),
   PORT: z.string(),
   SALT_ROUNDS: z.string().transform(Number).pipe(z.number().int().positive()),
+  JUDGE0_API_URL: z.string().url(),
 })
 
 function createEnv(env: NodeJS.ProcessEnv) {
   const validationResult = envSchema.safeParse(env)
-  if (!validationResult.success)
+  if (validationResult.error) {
     throw new Error(validationResult.error.message)
+  }
   return validationResult.data
 }
 

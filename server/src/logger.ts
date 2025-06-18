@@ -4,7 +4,6 @@ import { IS_DEVOLVEMENT } from './app/constants/env.constant.ts'
 import { Env } from './env.ts'
 
 const Logger = winston.createLogger({
-  defaultMeta: { service: 'user-service' },
   format: winston.format.json(),
   level: 'info',
   transports: [

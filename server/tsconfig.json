@@ -24,6 +24,6 @@
     "skipDefaultLibCheck": true,
     "skipLibCheck": true
   },
-  "include": ["./src", "./src/**/*.ts", "./*.config.js", "*.config.js"],
+  "include": ["./src", "./src/**/*.ts", "./*.config.js", "*.config.js", "./src/app/types/express/index.d.ts"],
   "exclude": ["./node_modules", "./dist"]
 }

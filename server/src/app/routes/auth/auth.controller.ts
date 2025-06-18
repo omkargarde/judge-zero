@@ -1,16 +1,12 @@
 // user controllers
-import type { CookieOptions, Request, Response } from 'express'
-
+import type { CookieOptions, NextFunction, Request, Response } from 'express'
 
 import bcrypt from 'bcryptjs'
-
 import { Logger } from '../../../logger.ts'
 import {
-  HTTP_ERROR_MESSAGES,
   HTTP_STATUS_CODES,
 } from '../../constants/status.constant.ts'
 import {
-  SendForgotPasswordTokenMail,
   SendVerificationTokenMail,
 } from '../../services/mail.service.ts'
 import {
@@ -45,15 +41,14 @@ import {
   userResetForgottenPasswordSchema,
 } from './auth.validator.ts'
 
-async function registerUser(req: Request, res: Response) {
-
-  const { email, password, username } = req.body 
-  const { success } = userRegistrationSchema.safeParse(req.body)
-  if (!success) {
-    throw new InternalServerErrorException()
+async function registerUser(req: Request, res: Response, next: NextFunction) {
+  const result = userRegistrationSchema.safeParse(req.body)
+  if (!result.success) {
+    throw new BadRequestException(JSON.stringify(result.error.flatten()))
   }
+  const { email, password, username } = result.data
   try {
-    Logger.info('Find if user already exists')
+    Logger.info('Finding if user already exists')
     const existingUser = await FindUser(email)
     if (existingUser) {
       throw new ConflictException(AUTH_MESSAGES.UserConflict)
@@ -83,9 +78,7 @@ async function registerUser(req: Request, res: Response) {
     }
     catch (mailError) {
       Logger.error('Failed to send verification email', mailError)
-      throw new InternalServerErrorException(
-        'Failed to send verification email',
-      )
+      next(mailError)
     }
 
     res
@@ -99,19 +92,16 @@ async function registerUser(req: Request, res: Response) {
       )
   }
   catch (error) {
-    throw new InternalServerErrorException(
-      HTTP_ERROR_MESSAGES.InternalServerError,
-      error,
-    )
+    next(error)
   }
 }
 
 async function verifyUser(req: Request, res: Response) {
   // verify user
   const { token } = req.params
-  const { success } = userEmailVerificationSchema.safeParse(req.params)
+  const result = userEmailVerificationSchema.safeParse(req.params)
   if (
-    !success
+    !result.success
     || token === null
     || token === undefined
     || token === ''
@@ -141,12 +131,11 @@ async function verifyUser(req: Request, res: Response) {
 }
 
 async function loginUser(req: Request, res: Response) {
-  Logger.info(req.body)
-  const { success } = userLoginSchema.safeParse(req.body)
-  if (!success) {
-    throw new InternalServerErrorException()
+  const result = userLoginSchema.safeParse(req.body)
+  if (!result.success) {
+    throw new BadRequestException(JSON.stringify(result.error.flatten()))
   }
-  const { email, password } = req.body 
+  const { email, password } = result.data
 
   const user = await FindUser(email)
   if (!user) {
@@ -158,7 +147,7 @@ async function loginUser(req: Request, res: Response) {
     throw new BadRequestException(AUTH_MESSAGES.CredFailed)
   }
 
-  const token = GenerateAccessToken(user.id, user.email, user.username)
+  const token = GenerateAccessToken(user.id, user.email, user.username, user.role)
 
   const cookieOptions: CookieOptions = GetJwtCookieOptions()
 
@@ -206,11 +195,11 @@ function logoutUser(req: Request, res: Response) {
 
 async function forgotPassword(req: Request, res: Response) {
   // get user by email and send reset token
-  const { email } = req.body 
-  const { success } = userForgotPasswordSchema.safeParse(req.body)
-  if (!success) {
+  const result = userForgotPasswordSchema.safeParse(req.body)
+  if (!result.success) {
     throw new BadRequestException(AUTH_MESSAGES.EmailNotProvided)
   }
+  const { email } = result.data
 
   const user = await FindUser(email)
   if (!user) {
@@ -218,8 +207,6 @@ async function forgotPassword(req: Request, res: Response) {
   }
   const resetToken = UnHashedToken()
   await ResetPassword(user.email, resetToken)
-
-  await SendForgotPasswordTokenMail(user.email, resetToken)
 
   res
     .status(HTTP_STATUS_CODES.Ok)
@@ -234,16 +221,16 @@ async function resetPassword(req: Request, res: Response) {
   if (token === null || token === undefined || token === '') {
     throw new BadRequestException(AUTH_MESSAGES.BadToken)
   }
-  const { password } = req.body 
-  const { success } = userResetForgottenPasswordSchema.safeParse(req.params)
-  if (!success) {
-    throw new InternalServerErrorException()
+  const result = userResetForgottenPasswordSchema.safeParse(req.body)
+  if (!result.success) {
+    throw new BadRequestException(JSON.stringify(result.error.flatten()))
   }
+  const { newPassword } = result.data
   const user = await FindUserWithToken(token)
   if (!user) {
     throw new NotFoundException(AUTH_MESSAGES.UserNotFound)
   }
-  await SetNewPassword(user.email, password)
+  await SetNewPassword(user.email, newPassword)
   res
     .status(HTTP_STATUS_CODES.Ok)
     .json(
