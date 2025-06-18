@@ -17,7 +17,7 @@ const envSchema = z.object({
   NODE_ENV: z.string(),
   PORT: z.string(),
   SALT_ROUNDS: z.string().transform(Number).pipe(z.number().int().positive()),
-  JUDGE0_API_URL: z.string(),
+  JUDGE0_API_URL: z.string().url(),
 })
 
 function createEnv(env: NodeJS.ProcessEnv) {
