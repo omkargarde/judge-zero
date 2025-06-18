@@ -60,7 +60,7 @@ async function createProblem(req: Request, res: Response, next: NextFunction) {
         if (result === undefined) {
           throw new BadRequestException(`Testcase ${i + 1} failed for language ${language}`)
         }
-        if (result.status_id !== JUDGE0_STATUS.Accepted) {
+        if (result.status.id !== JUDGE0_STATUS.Accepted) {
           throw new BadRequestException(`Testcase ${i + 1} failed for language ${language}`)
         }
       }

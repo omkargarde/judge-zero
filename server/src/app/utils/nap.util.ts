@@ -6,10 +6,10 @@
  *
  * @example
  * ```typescript
- * await PromisedSleep(1000); // Pauses execution for 1 second
+ * await Nap(1000); // Pauses execution for 1 second
  * ```
  */
-async function PromisedSleep(ms: number) {
+async function Nap(ms: number) {
   return new Promise(resolve => setTimeout(resolve, ms))
 }
-export { PromisedSleep }
+export { Nap }

@@ -2,7 +2,7 @@ import type { IBatchResults, ISubmissions } from './problem.type.ts'
 import axios from 'axios'
 import { Env } from '../../../env.ts'
 import { Logger } from '../../../logger.ts'
-import { PromisedSleep } from '../../utils/sleep.util.ts'
+import { Nap } from '../../utils/nap.util.ts'
 import { JUDGE0_STATUS } from './problem.constant.ts'
 
 function GetJudge0LanguageId(language: string) {
@@ -24,22 +24,23 @@ async function submitBatch(submissions: ISubmissions[]) {
 
 async function pollBatchResults(tokens: string[]) {
   while (true) {
-    const { data }: { data: IBatchResults } = await axios(`${Env.JUDGE0_API_URL}/submissions/batch`, {
+    const { data }: { data: IBatchResults } = await axios.get(`${Env.JUDGE0_API_URL}/submissions/batch`, {
       params: {
         tokens: tokens.join(','),
         base64_encoded: false,
       },
     })
+    Logger.info('poll data::', data)
     const results = data.submissions
     const isAllDone = results
       .every(
         result =>
-          result.status_id !== JUDGE0_STATUS.InQueue && result.status_id !== JUDGE0_STATUS.Processing,
+          result.status.id !== JUDGE0_STATUS.InQueue && result.status.id !== JUDGE0_STATUS.Processing,
       )
     if (isAllDone) {
       return results
     }
-    await new Promise(resolve => setTimeout(resolve, 1000))
+    await Nap(1000)
   }
 }
 
