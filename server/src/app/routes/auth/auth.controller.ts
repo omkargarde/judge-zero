@@ -1,11 +1,9 @@
 // user controllers
 import type { CookieOptions, NextFunction, Request, Response } from 'express'
 
-import { error } from 'node:console'
 import bcrypt from 'bcryptjs'
 import { Logger } from '../../../logger.ts'
 import {
-  HTTP_ERROR_MESSAGES,
   HTTP_STATUS_CODES,
 } from '../../constants/status.constant.ts'
 import {
@@ -149,7 +147,7 @@ async function loginUser(req: Request, res: Response) {
     throw new BadRequestException(AUTH_MESSAGES.CredFailed)
   }
 
-  const token = GenerateAccessToken(user.id, user.email, user.username)
+  const token = GenerateAccessToken(user.id, user.email, user.username, user.role)
 
   const cookieOptions: CookieOptions = GetJwtCookieOptions()
 

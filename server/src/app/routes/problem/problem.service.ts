@@ -39,7 +39,7 @@ async function pollBatchResults(tokens: string[]) {
     if (isAllDone) {
       return results
     }
-    await PromisedSleep(1000)
+    await new Promise(resolve => setTimeout(resolve, 1000))
   }
 }
 

@@ -1,13 +1,19 @@
 import { z } from 'zod'
 
+const exampleSchema = z.object({
+  input: z.string(),
+  output: z.string(),
+  explanation: z.string(),
+})
+
+const examplesSchema = z.record(exampleSchema)
+
 const CreateProblemSchema = z.object({
   title: z.string({ required_error: 'title is required' }),
   description: z.string({ required_error: 'description is required' }),
   difficulty: z.string({ required_error: 'difficulty is required' }),
   tags: z.array(z.string({ required_error: 'tags is required' })),
-  examples: z.object(
-    { input: z.string(), output: z.string(), explanation: z.string() },
-  ),
+  examples: examplesSchema,
   constraints: z.string({ required_error: 'constraints is required' }),
   testcases: z.array(
     z.object({

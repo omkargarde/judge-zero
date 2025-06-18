@@ -1,11 +1,12 @@
 import type { NextFunction, Request, Response } from 'express'
 import type { Difficulty } from '../../../../generated/prisma/index.js'
 import type { ISubmissions } from './problem.type.ts'
+import { loggers } from 'winston'
 import { UserRole } from '../../../../generated/prisma/index.js'
 import { db } from '../../../libs/db.ts'
+
 import { Logger } from '../../../logger.ts'
 import { HTTP_STATUS_CODES, HTTP_STATUS_MESSAGES } from '../../constants/status.constant.ts'
-
 import { ApiResponse } from '../../utils/api-response.util.ts'
 import { BadRequestException, InternalServerErrorException, UnauthorizedException } from '../../utils/error.util.ts'
 import { AUTH_MESSAGES } from '../auth/auth.constant.ts'
@@ -22,17 +23,20 @@ async function createProblem(req: Request, res: Response, next: NextFunction) {
   const tReq = result.data
 
   // check user role again
-
+  Logger.info('checking if user is authorized\n', req.user)
   if (req.user?.role !== UserRole.ADMIN) {
     throw new UnauthorizedException(HTTP_STATUS_MESSAGES.Unauthorized)
   }
+  Logger.info('user is authorized\n')
   // loop through each reference solution for different languages
   try {
     for (const [language, solutionCode] of Object.entries(tReq.referenceSolution)) {
+      Logger.info('fetching language id\n')
       const languageId = GetJudge0LanguageId(language)
       if (languageId === undefined) {
         throw new BadRequestException(PROBLEM_MESSAGES.LanguageNotSupported(language))
       }
+      Logger.info(`fetched id for ${language}:${languageId}`)
       const submissions = tReq.testcases
         .map((testcase) => {
           return {
@@ -47,6 +51,7 @@ async function createProblem(req: Request, res: Response, next: NextFunction) {
       const submissionTokens = batchTokens.map(
         batchToken => batchToken.token,
       )
+      Logger.info('polling batch')
       const results = await pollBatchResults(submissionTokens)
 
       for (let i = 0; i < results.length; i++) {
@@ -90,13 +95,8 @@ async function createProblem(req: Request, res: Response, next: NextFunction) {
       )
   }
   catch (error) {
-    if (error instanceof UnauthorizedException
-      || error instanceof BadRequestException
-      || error instanceof InternalServerErrorException) {
-      next(error)
-    }
-    Logger.error('unhandled error')
-    throw new InternalServerErrorException()
+    Logger.error('unhandled error', error)
+    return next(new InternalServerErrorException())
   }
 }
 

@@ -1,9 +1,10 @@
+import type { UserRole } from '../../../generated/prisma/index.js'
 import type { TSameSite } from '../types/same-site.type.ts'
 import crypto from 'node:crypto'
+
 import bcrypt from 'bcryptjs'
 
 import jwt from 'jsonwebtoken'
-
 import { Env } from '../../env.ts'
 import { IS_PRODUCTION } from '../constants/env.constant.ts'
 
@@ -15,12 +16,13 @@ async function HashPassword(password: string) {
   return bcrypt.hash(password, Number(Env.SALT_ROUNDS))
 }
 
-function GenerateAccessToken(id: string, email: string, username: string) {
+function GenerateAccessToken(id: string, email: string, username: string, role: UserRole) {
   return jwt.sign(
     {
       email,
       id,
       username,
+      role,
     },
     Env.JWT_SECRET,
     { expiresIn: Env.JWT_EXPIRE_TIME },

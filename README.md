@@ -36,7 +36,7 @@ docker run --name my-postgres -e POSTGRES_USER=myuser -e POSTGRES_PASSWORD=mypas
      ```
    - Start the database and Redis services:
      ```bash
-     docker-compose up -d db redis
+     docker-compose up db redis
      ```
    - Wait for a few seconds:
      ```bash
@@ -44,7 +44,7 @@ docker run --name my-postgres -e POSTGRES_USER=myuser -e POSTGRES_PASSWORD=mypas
      ```
    - Start the remaining services:
      ```bash
-     docker-compose up -d
+     docker-compose up
      ```
    - Wait a few more seconds:
      ```bash
